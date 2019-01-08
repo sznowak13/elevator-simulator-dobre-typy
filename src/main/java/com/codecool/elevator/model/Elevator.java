@@ -33,19 +33,21 @@ public class Elevator {
         }
     }
 
-    public void getCurrentFloorForPassengers() {
-        if (this.direction != Direction.NONE) {
-            LinkedList<Person> currentFloorPeople = currentFloor.getPeopleByDesiredDirection(this.direction);
-            if (currentFloorPeople.size() > 0) {
-                currentFloorPeople.forEach(this::takePerson);
-            }
+    public void letPassengersIn() {
+        LinkedList<Person> currentFloorPeople = currentFloor.getPeopleByDesiredDirection(this.direction);
+        if (currentFloorPeople.size() > 0) {
+            currentFloorPeople.forEach(this::takePerson);
         }
     }
 
     public void letPassengersOut() {
         int currentFloorLevel = currentFloor.getLevel();
         if (destinationsMap.containsKey(currentFloorLevel)) {
-            destinationsMap.get(currentFloorLevel).forEach(person -> person.leaveTheElevator());
+            ArrayList<Person> currentFloorPassengers = destinationsMap.get(currentFloorLevel);
+            for (Person passenger : currentFloorPassengers) {
+                currentFloorPassengers.remove(passenger);
+                peoplePool.add(passenger);
+            }
 
         }
     }
