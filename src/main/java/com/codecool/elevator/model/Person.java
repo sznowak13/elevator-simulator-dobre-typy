@@ -10,6 +10,22 @@ public class Person {
         this.destFloor = destFloor;
     }
 
+    Person() {
+
+    }
+
+    public void setCurrentFloor(Floor currentFloor) {
+        this.currentFloor = currentFloor;
+    }
+
+    public void setDestFloor(Floor destFloor) {
+        this.destFloor = destFloor;
+    }
+
+    public void setDesiredDirection(Direction desiredDirection) {
+        this.desiredDirection = desiredDirection;
+    }
+
     public Floor getCurrentFloor() {
         return currentFloor;
     }
