@@ -13,10 +13,9 @@ public class Building {
     }
 
     public Building(int floorsAmount, int elevatorsAmount) {
+        createPeople(floorsAmount * Consts.MAX_FLOOR_CAP);
         createFloors(floorsAmount);
         createElevators(elevatorsAmount);
-        createPeople(floorsAmount * Consts.MAX_FLOOR_CAP);
-
     }
 
     private void createPeople(int amount) {
