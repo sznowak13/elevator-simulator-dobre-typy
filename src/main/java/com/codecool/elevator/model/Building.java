@@ -6,7 +6,7 @@ import java.util.Queue;
 public class Building {
     private Floor[] floorList;
     private Elevator[] elevatorList;
-    private Queue<Person> peopleList = new LinkedList<>();
+    private Queue<Person> peoplePool = new LinkedList<>();
 
     public Building() {
         this(Consts.FLOORS_AMOUNT, Consts.ELEVATORS_AMOUNT);
@@ -21,7 +21,7 @@ public class Building {
 
     private void createPeople(int amount) {
         for (int i = 0; i < amount; i++) {
-            peopleList.add(new Person());
+            peoplePool.add(new Person());
         }
     }
 
