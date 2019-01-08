@@ -6,10 +6,10 @@ import java.util.LinkedList;
 public class Floor {
     private static int id;
     private int level;
-    private HashMap<Direction, LinkedList<Person>> peopleQueue = new HashMap<Direction, LinkedList<Person>>();
+    private HashMap<Direction, LinkedList<Person>> peopleQueue = new HashMap<>();
     {
-        peopleQueue.put(Direction.UP, new LinkedList<Person>());
-        peopleQueue.put(Direction.DOWN, new LinkedList<Person>());
+        peopleQueue.put(Direction.UP, new LinkedList<>());
+        peopleQueue.put(Direction.DOWN, new LinkedList<>());
     };
 
     Floor() {

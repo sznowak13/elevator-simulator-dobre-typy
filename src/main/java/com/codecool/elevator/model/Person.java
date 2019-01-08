@@ -6,7 +6,7 @@ public class Person {
     private Direction desiredDirection;
 
     Person(Floor currFloor, Floor destFloor) {
-        currentFloor = currFloor;
+        this.currentFloor = currFloor;
         this.destFloor = destFloor;
     }
 
