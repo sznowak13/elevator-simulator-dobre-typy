@@ -1,9 +1,12 @@
 package com.codecool.elevator.model;
 
+import java.util.LinkedList;
+import java.util.Queue;
+
 public class Building {
     private Floor[] floorList;
     private Elevator[] elevatorList;
-    private Person[] peopleList;
+    private Queue<Person> peopleList = new LinkedList<>();
 
     public Building() {
         this(Consts.FLOORS_AMOUNT, Consts.ELEVATORS_AMOUNT);
@@ -17,9 +20,8 @@ public class Building {
     }
 
     private void createPeople(int amount) {
-        this.peopleList = new Person[amount];
         for (int i = 0; i < amount; i++) {
-            peopleList[i] = new Person();
+            peopleList.add(new Person());
         }
     }
 
