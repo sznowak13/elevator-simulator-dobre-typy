@@ -10,8 +10,8 @@ public class Elevator {
     private HashMap<Integer, ArrayList<Person>> destinationsMap;
     private Direction direction = Direction.NONE;
 
-    public void takePerson(Person person) {
-        if (currentCap < Consts.MAX_ELEVATOR_CAP) {
+    private void takePerson(Person person) {
+        if (this.currentCap < Consts.MAX_ELEVATOR_CAP) {
             int personDesiredFloorLevel = person.getDestFloor().getLevel();
             if (destinationsMap.containsKey(personDesiredFloorLevel)) {
                 destinationsMap.get(personDesiredFloorLevel).add(person);
@@ -20,17 +20,17 @@ public class Elevator {
                 ArrayList<Person> newDestFloorList = new ArrayList<>();
                 newDestFloorList.add(person);
                 destinationsMap.put(personDesiredFloorLevel, newDestFloorList);
-                currentCap++;
             }
+            this.currentCap++;
             person.getCurrentFloor().removePersonFromQueue(person);
         }
     }
 
     public void getCurrentFloorForPassengers() {
-        if (direction != Direction.NONE) {
-            LinkedList<Person> currentFloorPeople = currentFloor.getPeopleByDesiredDirection(direction);
+        if (this.direction != Direction.NONE) {
+            LinkedList<Person> currentFloorPeople = currentFloor.getPeopleByDesiredDirection(this.direction);
             if (currentFloorPeople.size() > 0) {
-                currentFloorPeople.forEach(person -> destinationsMap.get(person.getDestFloor().getLevel()).add(person));
+                currentFloorPeople.forEach(this::takePerson);
             }
         }
     }

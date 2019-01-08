@@ -40,6 +40,6 @@ public class Building {
     }
 
     public void addPersonToFloor(Person person, Floor floor) {
-
+        floor.addPerson(person);
     }
 }
