@@ -5,15 +5,6 @@ public class Person {
     private Floor destFloor;
     private Direction desiredDirection;
 
-    Person(Floor currFloor, Floor destFloor) {
-        this.currentFloor = currFloor;
-        this.destFloor = destFloor;
-    }
-
-    Person() {
-
-    }
-
     public void setCurrentFloor(Floor currentFloor) {
         this.currentFloor = currentFloor;
     }
