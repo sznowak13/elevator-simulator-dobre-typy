@@ -28,13 +28,4 @@ public class Person {
     public Direction getDesiredDirection() {
         return desiredDirection;
     }
-
-    public void getInAnElevator(Elevator elevator) {
-        currentFloor.removePersonFromQueue(this);
-        elevator.takePerson(this);
-    }
-
-    public void leaveTheElevator() {
-
-    }
 }
