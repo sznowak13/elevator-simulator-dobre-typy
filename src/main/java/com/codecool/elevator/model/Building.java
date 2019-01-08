@@ -25,6 +25,7 @@ public class Building {
     }
 
     private void createElevators(int amount) {
+        Elevator.setPeoplePool(this.peoplePool);
         this.elevatorList = new Elevator[amount];
         for (int i = 0; i < amount; i++) {
             this.elevatorList[i] = new Elevator();

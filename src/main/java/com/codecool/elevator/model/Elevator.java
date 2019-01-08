@@ -3,12 +3,19 @@ package com.codecool.elevator.model;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.Queue;
 
 public class Elevator {
     private Floor currentFloor;
     private int currentCap;
     private HashMap<Integer, ArrayList<Person>> destinationsMap;
     private Direction direction = Direction.NONE;
+
+    private static Queue<Person> peoplePool;
+
+    public static void setPeoplePool(Queue<Person> newPeoplePool) {
+        peoplePool = newPeoplePool;
+    }
 
     private void takePerson(Person person) {
         if (this.currentCap < Consts.MAX_ELEVATOR_CAP) {
