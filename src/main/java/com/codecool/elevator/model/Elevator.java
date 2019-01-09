@@ -59,4 +59,13 @@ public class Elevator {
 
         }
     }
+
+    public void moveToNextFloor() {
+        int currentFloorLevel = this.currentFloor.getLevel();
+        if (currentFloorLevel < Elevator.floorList.size() && this.direction.equals(Direction.UP)) {
+            this.currentFloor = Elevator.floorList.get(currentFloorLevel + 1);
+        } else if (currentFloorLevel > 0 && this.direction.equals(Direction.DOWN)) {
+            this.currentFloor = Elevator.floorList.get(currentFloorLevel - 1);
+        }
+    }
 }
