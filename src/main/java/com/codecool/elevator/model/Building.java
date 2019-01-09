@@ -1,10 +1,12 @@
 package com.codecool.elevator.model;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Queue;
 
 public class Building {
-    private Floor[] floorList;
+    private List<Floor> floorList = new ArrayList<>();
     private Elevator[] elevatorList;
     private Queue<Person> peoplePool = new LinkedList<>();
 
@@ -26,6 +28,7 @@ public class Building {
 
     private void createElevators(int amount) {
         Elevator.setPeoplePool(this.peoplePool);
+        Elevator.setFloorList(this.floorList);
         this.elevatorList = new Elevator[amount];
         for (int i = 0; i < amount; i++) {
             this.elevatorList[i] = new Elevator();
@@ -33,9 +36,8 @@ public class Building {
     }
 
     private void createFloors(int amount) {
-        this.floorList = new Floor[amount];
         for (int i = 0; i < amount; i++) {
-            this.floorList[i] = new Floor();
+            this.floorList.add(new Floor());
         }
     }
 

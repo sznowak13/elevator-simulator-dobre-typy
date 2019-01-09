@@ -1,9 +1,6 @@
 package com.codecool.elevator.model;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.Queue;
+import java.util.*;
 
 public class Elevator {
     private Floor currentFloor;
@@ -12,9 +9,14 @@ public class Elevator {
     private Direction direction = Direction.NONE;
 
     private static Queue<Person> peoplePool;
+    private static List<Floor> floorList;
 
     public static void setPeoplePool(Queue<Person> newPeoplePool) {
         peoplePool = newPeoplePool;
+    }
+
+    public static void setFloorList(List<Floor> floorList) {
+        Elevator.floorList = floorList;
     }
 
     private void takePerson(Person person) {
