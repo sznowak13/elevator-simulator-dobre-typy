@@ -3,7 +3,7 @@ package com.codecool.elevator.model;
 import java.util.*;
 
 public class Elevator {
-    private Floor currentFloor;
+    private int currentFloorLevel;
     private int currentCap;
     private HashMap<Integer, ArrayList<Person>> destinationsMap;
     private Direction direction = Direction.NONE;
@@ -36,14 +36,13 @@ public class Elevator {
     }
 
     public void letPassengersIn() {
-        LinkedList<Person> currentFloorPeople = currentFloor.getPeopleByDesiredDirection(this.direction);
+        LinkedList<Person> currentFloorPeople = floorList.get(currentFloorLevel).getPeopleByDesiredDirection(this.direction);
         if (currentFloorPeople.size() > 0) {
             currentFloorPeople.forEach(this::takePerson);
         }
     }
 
     public void letPassengersOut() {
-        int currentFloorLevel = currentFloor.getLevel();
         if (destinationsMap.containsKey(currentFloorLevel)) {
             ArrayList<Person> currentFloorPassengers = destinationsMap.get(currentFloorLevel);
             for (Person passenger : currentFloorPassengers) {
@@ -61,11 +60,10 @@ public class Elevator {
     }
 
     public void moveToNextFloor() {
-        int currentFloorLevel = this.currentFloor.getLevel();
         if (currentFloorLevel < Elevator.floorList.size() && this.direction.equals(Direction.UP)) {
-            this.currentFloor = Elevator.floorList.get(currentFloorLevel + 1);
+            currentFloorLevel++;
         } else if (currentFloorLevel > 0 && this.direction.equals(Direction.DOWN)) {
-            this.currentFloor = Elevator.floorList.get(currentFloorLevel - 1);
+            currentFloorLevel--;
         }
     }
 }
