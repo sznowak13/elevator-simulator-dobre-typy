@@ -2,68 +2,120 @@ package com.codecool.elevator.model;
 
 import java.util.*;
 
-public class Elevator {
-    private int currentFloorLevel;
-    private int currentCap;
-    private HashMap<Integer, ArrayList<Person>> destinationsMap;
+public class Elevator extends Observable implements Runnable{
+    private int currentFloorLevel = 0;
+    private List<Person> peopleList = new ArrayList<>();
+    private Queue<Integer> destinationsQueue = new LinkedList<>();
     private Direction direction = Direction.NONE;
 
-    private static Queue<Person> peoplePool;
-    private static List<Floor> floorList;
+    private static Elevator[] elevatorPool;
+    private static Queue<Integer> externalQueue = new LinkedList<>();
 
-    public static void setPeoplePool(Queue<Person> newPeoplePool) {
-        peoplePool = newPeoplePool;
+    public static Elevator[] getElevatorPool() {
+        return elevatorPool;
     }
 
-    public static void setFloorList(List<Floor> floorList) {
-        Elevator.floorList = floorList;
+    public static void setElevatorPool(Elevator[] elevatorPool) {
+        Elevator.elevatorPool = elevatorPool;
     }
 
-    private void takePerson(Person person) {
-        if (this.currentCap < Consts.MAX_ELEVATOR_CAP) {
-            int personDesiredFloorLevel = person.getDestFloor().getLevel();
-            if (destinationsMap.containsKey(personDesiredFloorLevel)) {
-                destinationsMap.get(personDesiredFloorLevel).add(person);
-            }
-            else {
-                ArrayList<Person> newDestFloorList = new ArrayList<>();
-                newDestFloorList.add(person);
-                destinationsMap.put(personDesiredFloorLevel, newDestFloorList);
-            }
-            this.currentCap++;
-            person.getCurrentFloor().removePersonFromQueue(person);
-        }
+    public synchronized int getCurrentFloorLevel() {
+        return currentFloorLevel;
     }
 
-    public void letPassengersIn() {
-        LinkedList<Person> currentFloorPeople = floorList.get(currentFloorLevel).getPeopleByDesiredDirection(this.direction);
-        if (currentFloorPeople.size() > 0) {
-            currentFloorPeople.forEach(this::takePerson);
-        }
+    public synchronized void incrementFloorLevel() {
+        currentFloorLevel++;
     }
 
-    public void letPassengersOut() {
-        if (destinationsMap.containsKey(currentFloorLevel)) {
-            ArrayList<Person> currentFloorPassengers = destinationsMap.get(currentFloorLevel);
-            for (Person passenger : currentFloorPassengers) {
-                currentFloorPassengers.remove(passenger);
-                peoplePool.add(passenger);
-            }
+    public synchronized void decrementFloorLevel() {
+        currentFloorLevel--;
+    }
 
-        }
+    public List<Person> getPeopleList() {
+        return peopleList;
+    }
+
+    public void setPeopleList(List<Person> peopleList) {
+        this.peopleList = peopleList;
+    }
+
+    public void setCurrentFloorLevel(int currentFloorLevel) {
+        this.currentFloorLevel = currentFloorLevel;
+    }
+
+    public Queue<Integer> getDestinationsQueue() {
+        return destinationsQueue;
+    }
+
+    public boolean checkIfPersonIsInside(Person person) {
+        return peopleList.contains(person);
+    }
+    public void addToDestinationsQueue(int destinationFloorLevel) {
+        this.destinationsQueue.add(destinationFloorLevel);
+    }
+
+    public void setDirection(Direction direction) {
+        this.direction = direction;
+    }
+
+    public Direction getDirection() {
+        return direction;
+    }
+
+    public void addPerson(Person person) {
+        this.peopleList.add(person);
     }
 
     public void checkForExternalCall() {
-        if (direction == Direction.NONE && destinationsMap.isEmpty()) {
-
+        if (externalQueue.size() > 0) {
+            this.destinationsQueue.add(externalQueue.poll());
         }
     }
 
+    public static void addToExternalQueue(int floorLevel) {
+        externalQueue.add(floorLevel);
+    }
+
     public void moveToNextFloor() {
-        if (currentFloorLevel < Elevator.floorList.size() && this.direction.equals(Direction.UP)) {
-            currentFloorLevel++;
+        if (currentFloorLevel < Floor.getFloorList().size()-1 && this.direction.equals(Direction.UP)) {
+            incrementFloorLevel();
         } else if (currentFloorLevel > 0 && this.direction.equals(Direction.DOWN)) {
-            currentFloorLevel--;
+            decrementFloorLevel();
+        }
+        setChanged();
+        notifyObservers(getCurrentFloorLevel());
+        System.out.println("moved to " + getCurrentFloorLevel());
+        System.out.println("orders: " + this.destinationsQueue);
+        if (destinationsQueue.peek() == currentFloorLevel) {
+            System.out.println("JESTEM TU");
+            this.direction = Direction.NONE;
+            destinationsQueue.poll();
+        }
+    }
+
+
+
+    @Override
+    public void run() {
+        while (true) {
+            if (direction == Direction.NONE) {
+                if (destinationsQueue.isEmpty()) {
+                    checkForExternalCall();
+                }
+                else {
+                    setDirection((destinationsQueue.peek()-getCurrentFloorLevel() > 0) ? Direction.UP:Direction.DOWN);
+                }
+            }
+            else {
+                moveToNextFloor();
+            }
+
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
         }
     }
 }
