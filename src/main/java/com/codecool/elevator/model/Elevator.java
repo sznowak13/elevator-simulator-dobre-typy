@@ -35,6 +35,10 @@ public class Elevator extends Observable implements Runnable{
         return peopleList;
     }
 
+    public static Queue<Person> getExternalQueue() {
+        return externalQueue;
+    }
+
     public void setPeopleList(List<Person> peopleList) {
         this.peopleList = peopleList;
     }
@@ -54,19 +58,6 @@ public class Elevator extends Observable implements Runnable{
         externalQueue.remove(person);
     }
 
-    public boolean checkIfPersonIsInside(Person person) {
-        return peopleList.contains(person);
-    }
-    public void updateDestinationFloorLevel(int floorLevel) {
-        if (floorLevel > destinationFloorLevel) {
-            destinationFloorLevel = floorLevel;
-        }
-    }
-
-    public void setDirection(Direction direction) {
-        this.direction = direction;
-    }
-
     public Direction getDirection() {
         return direction;
     }
@@ -79,23 +70,6 @@ public class Elevator extends Observable implements Runnable{
         externalQueue.add(person);
     }
 
-    public boolean checkIfSomebodyWantsToGetOut() {
-        for (Person person: peopleList) {
-            if (person.getDestFloor().getLevel() == currentFloorLevel) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public boolean checkIfSomebodyWantsToGetIn() {
-        for (Person person: externalQueue) {
-            if (person.getCurrentFloor().getLevel() == currentFloorLevel) {
-                return true;
-            }
-        }
-        return false;
-    }
 
     public void moveToNextFloor() {
         if (currentFloorLevel < Floor.getFloorList().size()-1 && this.direction == Direction.UP) {
@@ -110,71 +84,10 @@ public class Elevator extends Observable implements Runnable{
             }
             return;
         }
-        setChanged();
-        notifyObservers(getCurrentFloorLevel());
     }
-
-
 
     @Override
     public void run() {
-        while (true) {
-            if (checkIfSomebodyWantsToGetOut() || checkIfSomebodyWantsToGetIn()) {
-                setChanged();
-                notifyObservers(currentFloorLevel);
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
 
-            if (destinationFloorLevel - currentFloorLevel > 0) {
-                setDirection(Direction.UP);
-            }
-            else if (destinationFloorLevel - currentFloorLevel < 0){
-                setDirection(Direction.DOWN);
-            } else {
-                setDirection(Direction.NONE);
-            }
-
-
-            if (direction == Direction.NONE) {
-                if (peopleList.isEmpty()) {
-
-                    if (!(externalQueue.size() == 0)) {
-                        setDestinationFloorLevel(externalQueue.peek().getCurrentFloor().getLevel());
-                    }
-                    else {
-                        notifyObservers(currentFloorLevel);
-                    }
-
-                } else {
-                    ArrayList<Integer> temp = new ArrayList<>();
-                    for (int i = 0; i < peopleList.size(); i++) {
-                        temp.add(peopleList.get(i).getDestFloor().getLevel());
-                    }
-
-                    int highestDestFloor = Collections.max(temp);
-                    int lowestDestFloor = Collections.min(temp);
-
-                    if (highestDestFloor - currentFloorLevel > currentFloorLevel - lowestDestFloor) {
-                        destinationFloorLevel = highestDestFloor;
-                    } else {
-                        destinationFloorLevel = lowestDestFloor;
-                    }
-
-                }
-
-            } else {
-                moveToNextFloor();
-            }
-
-            try {
-                Thread.sleep(200);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
     }
 }

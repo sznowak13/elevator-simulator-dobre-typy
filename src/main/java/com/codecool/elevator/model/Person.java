@@ -40,29 +40,16 @@ public class Person implements Observer {
         return destFloor;
     }
 
-    public Direction getDesiredDirection() {
-        return desiredDirection;
+    public int getCurrentFloorLevel() {
+        return currentFloor.getLevel();
     }
 
-    @Override
-    public void update(Observable o, Object floorLevel) {
-        Elevator elevator = (Elevator) o;
-        int elevatorsFloorLevel = (int) floorLevel;
+    public int getDestFloorLevel() {
+        return destFloor.getLevel();
+    }
 
-        if (elevatorsFloorLevel == this.getCurrentFloor().getLevel()) {
-            if (!elevator.checkIfPersonIsInside(this)) {
-                this.getInElevator(elevator);
-                 if (destFloor.getLevel() > elevator.getDestinationFloorLevel() && elevator.getDirection() == Direction.UP) {
-                    elevator.setDestinationFloorLevel(destFloor.getLevel());
-                } else if (destFloor.getLevel() < elevator.getDestinationFloorLevel() && elevator.getDirection() == Direction.DOWN) {
-                    elevator.setDestinationFloorLevel(destFloor.getLevel());
-                }
-            }
-        } else {
-            if (elevatorsFloorLevel == this.getDestFloor().getLevel() && elevator.checkIfPersonIsInside(this)) {
-                this.getOutTheElevator(elevator);
-            }
-        }
+    public Direction getDesiredDirection() {
+        return desiredDirection;
     }
 
     public void spawn(Floor floor) {
@@ -72,10 +59,6 @@ public class Person implements Observer {
         } while (this.destFloor == this.currentFloor);
 
         setDesiredDirection((destFloor.getLevel() - currentFloor.getLevel() < 0) ? Direction.UP : Direction.DOWN);
-
-        for (Elevator elevator: Elevator.getElevatorPool()) {
-            elevator.addObserver(this);
-        }
 
         floor.addPerson(this);
     }
@@ -96,5 +79,10 @@ public class Person implements Observer {
     public void getOutTheElevator(Elevator elevator) {
         elevator.getPeopleList().remove(this);
         if (!peoplePool.contains(this)) Person.getPeoplePool().add(this);
+    }
+
+    @Override
+    public void update(Observable o, Object arg) {
+
     }
 }
