@@ -70,10 +70,9 @@ public class Building implements Runnable{
                 System.out.println("Current level: " + elevator.getCurrentFloorLevel() + " Current Capacity: " + elevator.getPeopleList().size() + " Dir: " + elevator.getDirection());
             }
 
-            System.out.println("person is Going to: " + person.getDestFloor().getLevel());
-            System.out.println("person is Going from: " + person.getCurrentFloor().getLevel());
+            System.out.println("People in the elevator " + elevatorPool[0].getPeopleList().size() +  " /  people in the pool: " + peoplePool.size() );
             try {
-                Thread.sleep(3000);
+                Thread.sleep(1000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }

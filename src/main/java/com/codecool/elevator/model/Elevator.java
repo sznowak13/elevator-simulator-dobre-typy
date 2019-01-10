@@ -88,22 +88,23 @@ public class Elevator extends Observable implements Runnable{
         return false;
     }
 
-    public void moveToNextFloor() {
-        System.out.println(direction);
-        if (checkIfSomebodyWantsToGetOut()) {
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+    public boolean checkIfSomebodyWantsToGetIn() {
+        for (Person person: externalQueue) {
+            if (person.getCurrentFloor().getLevel() == currentFloorLevel) {
+                return true;
             }
         }
+        return false;
+    }
+
+    public void moveToNextFloor() {
         if (currentFloorLevel < Floor.getFloorList().size()-1 && this.direction == Direction.UP) {
             incrementFloorLevel();
         } else if ((currentFloorLevel > 0) && this.direction == Direction.DOWN) {
             decrementFloorLevel();
         } else {
             try {
-                Thread.sleep(2000);
+                Thread.sleep(1000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -111,8 +112,6 @@ public class Elevator extends Observable implements Runnable{
         }
         setChanged();
         notifyObservers(getCurrentFloorLevel());
-        System.out.println("MOVED TO: " + currentFloorLevel);
-        System.out.println("PPL INSIDE" + peopleList.size());
     }
 
 
@@ -120,6 +119,16 @@ public class Elevator extends Observable implements Runnable{
     @Override
     public void run() {
         while (true) {
+            if (checkIfSomebodyWantsToGetOut() || checkIfSomebodyWantsToGetIn()) {
+                setChanged();
+                notifyObservers(currentFloorLevel);
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+
             if (destinationFloorLevel - currentFloorLevel > 0) {
                 setDirection(Direction.UP);
             }
@@ -135,11 +144,6 @@ public class Elevator extends Observable implements Runnable{
 
                     if (!(externalQueue.size() == 0)) {
                         setDestinationFloorLevel(externalQueue.peek().getCurrentFloor().getLevel());
-                        try {
-                            Thread.sleep(3000);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
                     }
                     else {
                         notifyObservers(currentFloorLevel);
@@ -167,7 +171,7 @@ public class Elevator extends Observable implements Runnable{
             }
 
             try {
-                Thread.sleep(600);
+                Thread.sleep(200);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }

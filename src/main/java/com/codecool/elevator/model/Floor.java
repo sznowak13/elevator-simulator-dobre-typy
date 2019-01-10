@@ -38,7 +38,6 @@ public class Floor {
     };
 
     public void removePersonFromQueue(Person person) {
-        Direction personDirection = person.getDesiredDirection();
         peopleQueue.remove(person);
         refreshCurrentCap();
     }
