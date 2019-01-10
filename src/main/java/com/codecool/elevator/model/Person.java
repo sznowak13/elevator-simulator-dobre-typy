@@ -1,11 +1,10 @@
 package com.codecool.elevator.model;
 
-import java.util.List;
-import java.util.Observable;
-import java.util.Observer;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.Queue;
 
-public class Person implements Observer {
+public class Person implements PropertyChangeListener {
     private Floor currentFloor;
     private Floor destFloor;
     private Direction desiredDirection;
@@ -14,6 +13,14 @@ public class Person implements Observer {
 
     public static Queue<Person> getPeoplePool() {
         return peoplePool;
+    }
+
+    public Floor getDestFloor() {
+        return destFloor;
+    }
+
+    public Floor getCurrentFloor() {
+        return currentFloor;
     }
 
     public static void setPeoplePool(Queue<Person> peoplePool) {
@@ -32,26 +39,6 @@ public class Person implements Observer {
         this.desiredDirection = desiredDirection;
     }
 
-    public Floor getCurrentFloor() {
-        return currentFloor;
-    }
-
-    public Floor getDestFloor() {
-        return destFloor;
-    }
-
-    public int getCurrentFloorLevel() {
-        return currentFloor.getLevel();
-    }
-
-    public int getDestFloorLevel() {
-        return destFloor.getLevel();
-    }
-
-    public Direction getDesiredDirection() {
-        return desiredDirection;
-    }
-
     public void spawn(Floor floor) {
         setCurrentFloor(floor);
         do {
@@ -59,30 +46,47 @@ public class Person implements Observer {
         } while (this.destFloor == this.currentFloor);
 
         setDesiredDirection((destFloor.getLevel() - currentFloor.getLevel() < 0) ? Direction.UP : Direction.DOWN);
-
+        watchAllElevators();
         floor.addPerson(this);
+        callAnElevator();
     }
 
     public void callAnElevator() {
         Elevator.addToExternalQueue(this);
     }
 
-    public void getInElevator(Elevator elevator) {
-        if (elevator.getPeopleList().size() < Consts.MAX_ELEVATOR_CAP) {
-            this.currentFloor.removePersonFromQueue(this);
-            elevator.addPerson(this);
-            System.out.println(elevator.getPeopleList());
-            elevator.removePersonFromExternalQueue(this);
+    public void watchAllElevators() {
+        Elevator[] elevatorPool = Elevator.getElevatorPool();
+        if (elevatorPool.length > 0) {
+            for (Elevator elevator: elevatorPool) {
+                elevator.addPropertyChangeListener(this);
+            }
         }
     }
 
+    public void getInElevator(Elevator elevator) {
+        currentFloor.removePersonFromQueue(this);
+        elevator.getPeopleList().add(this);
+        Elevator.removeFromExternalQueue(this);
+    }
+
     public void getOutTheElevator(Elevator elevator) {
+        peoplePool.add(this);
         elevator.getPeopleList().remove(this);
-        if (!peoplePool.contains(this)) Person.getPeoplePool().add(this);
+        elevator.removePropertyChangeListener(this);
     }
 
     @Override
-    public void update(Observable o, Object arg) {
+    public void propertyChange(PropertyChangeEvent evt) {
 
+        Elevator elevator = (Elevator) evt.getOldValue();
+        int elevatorsCurrentFloor = (int) evt.getNewValue();
+
+        if (elevator.getPeopleList().contains(this) && this.destFloor.getLevel() == elevatorsCurrentFloor) {
+            getOutTheElevator(elevator);
+        }
+        else if (this.currentFloor.getLevel() == elevatorsCurrentFloor && elevator.getPeopleList().size() < Consts.MAX_ELEVATOR_CAP && !elevator.getPeopleList().contains(this)) {
+            getInElevator(elevator);
+        }
     }
 }
