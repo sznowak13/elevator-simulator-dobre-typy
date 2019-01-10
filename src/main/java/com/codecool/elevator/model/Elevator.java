@@ -5,11 +5,11 @@ import java.util.*;
 public class Elevator extends Observable implements Runnable{
     private int currentFloorLevel = 0;
     private List<Person> peopleList = new ArrayList<>();
-    private Queue<Integer> destinationsQueue = new LinkedList<>();
+    private int destinationFloorLevel = 0;
     private Direction direction = Direction.NONE;
 
     private static Elevator[] elevatorPool;
-    private static Queue<Integer> externalQueue = new LinkedList<>();
+    private static Queue<Person> externalQueue = new LinkedList<>();
 
     public static Elevator[] getElevatorPool() {
         return elevatorPool;
@@ -43,15 +43,24 @@ public class Elevator extends Observable implements Runnable{
         this.currentFloorLevel = currentFloorLevel;
     }
 
-    public Queue<Integer> getDestinationsQueue() {
-        return destinationsQueue;
+    public int getDestinationFloorLevel() {
+        return destinationFloorLevel;
+    }
+    public void setDestinationFloorLevel(int floorLevel) {
+        this.destinationFloorLevel = floorLevel;
+    }
+
+    public void removePersonFromExternalQueue(Person person) {
+        externalQueue.remove(person);
     }
 
     public boolean checkIfPersonIsInside(Person person) {
         return peopleList.contains(person);
     }
-    public void addToDestinationsQueue(int destinationFloorLevel) {
-        this.destinationsQueue.add(destinationFloorLevel);
+    public void updateDestinationFloorLevel(int floorLevel) {
+        if (floorLevel > destinationFloorLevel) {
+            destinationFloorLevel = floorLevel;
+        }
     }
 
     public void setDirection(Direction direction) {
@@ -66,31 +75,44 @@ public class Elevator extends Observable implements Runnable{
         this.peopleList.add(person);
     }
 
-    public void checkForExternalCall() {
-        if (externalQueue.size() > 0) {
-            this.destinationsQueue.add(externalQueue.poll());
-        }
+    public static void addToExternalQueue(Person person) {
+        externalQueue.add(person);
     }
 
-    public static void addToExternalQueue(int floorLevel) {
-        externalQueue.add(floorLevel);
+    public boolean checkIfSomebodyWantsToGetOut() {
+        for (Person person: peopleList) {
+            if (person.getDestFloor().getLevel() == currentFloorLevel) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public void moveToNextFloor() {
-        if (currentFloorLevel < Floor.getFloorList().size()-1 && this.direction.equals(Direction.UP)) {
+        System.out.println(direction);
+        if (checkIfSomebodyWantsToGetOut()) {
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        if (currentFloorLevel < Floor.getFloorList().size()-1 && this.direction == Direction.UP) {
             incrementFloorLevel();
-        } else if (currentFloorLevel > 0 && this.direction.equals(Direction.DOWN)) {
+        } else if ((currentFloorLevel > 0) && this.direction == Direction.DOWN) {
             decrementFloorLevel();
+        } else {
+            try {
+                Thread.sleep(2000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            return;
         }
         setChanged();
         notifyObservers(getCurrentFloorLevel());
-        System.out.println("moved to " + getCurrentFloorLevel());
-        System.out.println("orders: " + this.destinationsQueue);
-        if (destinationsQueue.peek() == currentFloorLevel) {
-            System.out.println("JESTEM TU");
-            this.direction = Direction.NONE;
-            destinationsQueue.poll();
-        }
+        System.out.println("MOVED TO: " + currentFloorLevel);
+        System.out.println("PPL INSIDE" + peopleList.size());
     }
 
 
@@ -98,24 +120,57 @@ public class Elevator extends Observable implements Runnable{
     @Override
     public void run() {
         while (true) {
-            if (direction == Direction.NONE) {
-                if (destinationsQueue.isEmpty()) {
-                    checkForExternalCall();
-                }
-                else {
-                    setDirection((destinationsQueue.peek()-getCurrentFloorLevel() > 0) ? Direction.UP:Direction.DOWN);
-                }
+            if (destinationFloorLevel - currentFloorLevel > 0) {
+                setDirection(Direction.UP);
             }
-            else {
+            else if (destinationFloorLevel - currentFloorLevel < 0){
+                setDirection(Direction.DOWN);
+            } else {
+                setDirection(Direction.NONE);
+            }
+
+
+            if (direction == Direction.NONE) {
+                if (peopleList.isEmpty()) {
+
+                    if (!(externalQueue.size() == 0)) {
+                        setDestinationFloorLevel(externalQueue.peek().getCurrentFloor().getLevel());
+                        try {
+                            Thread.sleep(3000);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    else {
+                        notifyObservers(currentFloorLevel);
+                    }
+
+                } else {
+                    ArrayList<Integer> temp = new ArrayList<>();
+                    for (int i = 0; i < peopleList.size(); i++) {
+                        temp.add(peopleList.get(i).getDestFloor().getLevel());
+                    }
+
+                    int highestDestFloor = Collections.max(temp);
+                    int lowestDestFloor = Collections.min(temp);
+
+                    if (highestDestFloor - currentFloorLevel > currentFloorLevel - lowestDestFloor) {
+                        destinationFloorLevel = highestDestFloor;
+                    } else {
+                        destinationFloorLevel = lowestDestFloor;
+                    }
+
+                }
+
+            } else {
                 moveToNextFloor();
             }
 
             try {
-                Thread.sleep(1000);
+                Thread.sleep(600);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-
         }
     }
 }

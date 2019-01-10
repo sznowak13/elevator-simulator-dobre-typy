@@ -47,15 +47,37 @@ public class Person implements Observer {
     @Override
     public void update(Observable o, Object floorLevel) {
         Elevator elevator = (Elevator) o;
-        if (!elevator.checkIfPersonIsInside(this)) {
-            if ((int) floorLevel == currentFloor.getLevel() && elevator.getDirection() == desiredDirection) {
+        int elevatorsFloorLevel = (int) floorLevel;
+
+        if ((int) elevatorsFloorLevel == this.getCurrentFloor().getLevel() && elevator.getDirection() == desiredDirection) {
+            if (!elevator.checkIfPersonIsInside(this)) {
                 this.getInElevator(elevator);
-            }
-        } else {
-            if ((int) floorLevel == destFloor.getLevel()) {
-                this.getOutTheElevator(elevator);
+                 if (destFloor.getLevel() > elevator.getDestinationFloorLevel() && elevator.getDirection() == Direction.UP) {
+                    elevator.setDestinationFloorLevel(destFloor.getLevel());
+                } else if (destFloor.getLevel() < elevator.getDestinationFloorLevel() && elevator.getDirection() == Direction.DOWN) {
+                    elevator.setDestinationFloorLevel(destFloor.getLevel());
+                }
+            } else {
+                if (elevatorsFloorLevel == this.getDestFloor().getLevel()) {
+                    this.getOutTheElevator(elevator);
+                }
             }
         }
+//        if (!elevator.checkIfPersonIsInside(this)) {
+//            if ((int) floorLevel == currentFloor.getLevel() && elevator.getDirection() == desiredDirection) {
+//                this.getInElevator(elevator);
+//                if (destFloor.getLevel() > elevator.getDestinationFloorLevel() && elevator.getDirection() == Direction.UP) {
+//                    elevator.setDestinationFloorLevel(destFloor.getLevel());
+//                }
+//                else if (destFloor.getLevel() < elevator.getDestinationFloorLevel() && elevator.getDirection() == Direction.DOWN) {
+//                    elevator.setDestinationFloorLevel(destFloor.getLevel());
+//                }
+//            }
+//        } else {
+//            if ((int) floorLevel == destFloor.getLevel()) {
+//                this.getOutTheElevator(elevator);
+//            }
+//        }
 
     }
 
@@ -75,17 +97,21 @@ public class Person implements Observer {
     }
 
     public void callAnElevator() {
-        Elevator.addToExternalQueue(currentFloor.getLevel());
+        Elevator.addToExternalQueue(this);
     }
 
     public void getInElevator(Elevator elevator) {
-        this.currentFloor.removePersonFromQueue(this);
-        elevator.addPerson(this);
-        elevator.addToDestinationsQueue(destFloor.getLevel());
+        System.out.println(this + " wsiada DO WINDY");
+        if (elevator.getPeopleList().size() < Consts.MAX_ELEVATOR_CAP) {
+            this.currentFloor.removePersonFromQueue(this);
+            elevator.addPerson(this);
+            elevator.removePersonFromExternalQueue(this);
+        }
     }
 
     public void getOutTheElevator(Elevator elevator) {
+        System.out.println((this + "Wysiada z windy"));
         elevator.getPeopleList().remove(this);
-        Person.getPeoplePool().add(this);
+        if (!peoplePool.contains(this)) Person.getPeoplePool().add(this);
     }
 }

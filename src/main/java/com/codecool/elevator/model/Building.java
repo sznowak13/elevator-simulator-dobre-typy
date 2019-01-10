@@ -56,9 +56,11 @@ public class Building implements Runnable{
                 randomFloor = Floor.getRandomFloor();
             } while (randomFloor.getCurrentCap() >= Consts.MAX_FLOOR_CAP);
 
-            Person person = peoplePool.poll();
-            person.spawn(randomFloor);
-            person.callAnElevator();
+            //if (!peoplePool.isEmpty()) {
+                Person person = peoplePool.poll();
+                person.spawn(randomFloor);
+                person.callAnElevator();
+            //}
 
             System.out.println(peoplePool.size());
             for (Floor floor: floorList) {
@@ -71,7 +73,7 @@ public class Building implements Runnable{
             System.out.println("person is Going to: " + person.getDestFloor().getLevel());
             System.out.println("person is Going from: " + person.getCurrentFloor().getLevel());
             try {
-                Thread.sleep(Consts.PEOPLE_SPAWN_TIME*1000);
+                Thread.sleep(3000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
