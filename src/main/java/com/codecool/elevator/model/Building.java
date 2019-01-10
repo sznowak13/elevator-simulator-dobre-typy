@@ -56,11 +56,11 @@ public class Building implements Runnable{
                 randomFloor = Floor.getRandomFloor();
             } while (randomFloor.getCurrentCap() >= Consts.MAX_FLOOR_CAP);
 
-            //if (!peoplePool.isEmpty()) {
+            if (!peoplePool.isEmpty()) {
                 Person person = peoplePool.poll();
                 person.spawn(randomFloor);
                 person.callAnElevator();
-            //}
+            }
 
             System.out.println(peoplePool.size());
             for (Floor floor: floorList) {

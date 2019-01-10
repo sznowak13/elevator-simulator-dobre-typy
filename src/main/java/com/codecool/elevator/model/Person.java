@@ -1,11 +1,12 @@
 package com.codecool.elevator.model;
 
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.List;
 import java.util.Observable;
-import java.util.Observer;
 import java.util.Queue;
 
-public class Person implements Observer {
+public class Person implements PropertyChangeListener {
     private Floor currentFloor;
     private Floor destFloor;
     private Direction desiredDirection;
@@ -44,27 +45,6 @@ public class Person implements Observer {
         return desiredDirection;
     }
 
-    @Override
-    public void update(Observable o, Object floorLevel) {
-        Elevator elevator = (Elevator) o;
-        int elevatorsFloorLevel = (int) floorLevel;
-
-        if (elevatorsFloorLevel == this.getCurrentFloor().getLevel()) {
-            if (!elevator.checkIfPersonIsInside(this)) {
-                this.getInElevator(elevator);
-                 if (destFloor.getLevel() > elevator.getDestinationFloorLevel() && elevator.getDirection() == Direction.UP) {
-                    elevator.setDestinationFloorLevel(destFloor.getLevel());
-                } else if (destFloor.getLevel() < elevator.getDestinationFloorLevel() && elevator.getDirection() == Direction.DOWN) {
-                    elevator.setDestinationFloorLevel(destFloor.getLevel());
-                }
-            }
-        } else {
-            if (elevatorsFloorLevel == this.getDestFloor().getLevel() && elevator.checkIfPersonIsInside(this)) {
-                this.getOutTheElevator(elevator);
-            }
-        }
-    }
-
     public void spawn(Floor floor) {
         setCurrentFloor(floor);
         do {
@@ -72,10 +52,6 @@ public class Person implements Observer {
         } while (this.destFloor == this.currentFloor);
 
         setDesiredDirection((destFloor.getLevel() - currentFloor.getLevel() < 0) ? Direction.UP : Direction.DOWN);
-
-        for (Elevator elevator: Elevator.getElevatorPool()) {
-            elevator.addObserver(this);
-        }
 
         floor.addPerson(this);
     }
@@ -88,7 +64,6 @@ public class Person implements Observer {
         if (elevator.getPeopleList().size() < Consts.MAX_ELEVATOR_CAP) {
             this.currentFloor.removePersonFromQueue(this);
             elevator.addPerson(this);
-            System.out.println(elevator.getPeopleList());
             elevator.removePersonFromExternalQueue(this);
         }
     }
@@ -96,5 +71,15 @@ public class Person implements Observer {
     public void getOutTheElevator(Elevator elevator) {
         elevator.getPeopleList().remove(this);
         if (!peoplePool.contains(this)) Person.getPeoplePool().add(this);
+    }
+
+    @Override
+    public void propertyChange(PropertyChangeEvent evt) {
+        int elevatorsFloor = (int)evt.getNewValue();
+        Elevator elevator = (Elevator) evt.getOldValue();
+        if (elevatorsFloor == currentFloor.getLevel()) {
+
+        }
+
     }
 }

@@ -1,5 +1,7 @@
 package com.codecool.elevator.model;
 
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 import java.util.*;
 
 public class Elevator extends Observable implements Runnable{
@@ -7,9 +9,23 @@ public class Elevator extends Observable implements Runnable{
     private List<Person> peopleList = new ArrayList<>();
     private int destinationFloorLevel = 0;
     private Direction direction = Direction.NONE;
+    private PropertyChangeSupport support = new PropertyChangeSupport(this);
 
     private static Elevator[] elevatorPool;
     private static Queue<Person> externalQueue = new LinkedList<>();
+
+
+    public void addPropertyChangeListener(PropertyChangeListener pcl) {
+        support.addPropertyChangeListener(pcl);
+    }
+
+    public void removePropertyChangeListener(PropertyChangeListener pcl) {
+        support.removePropertyChangeListener(pcl);
+    }
+
+    public void informObserverAboutChangingFloorLevel(int nextFloor) {
+        support.firePropertyChange("currentFloor", this , nextFloor);
+    }
 
     public static Elevator[] getElevatorPool() {
         return elevatorPool;
@@ -98,20 +114,16 @@ public class Elevator extends Observable implements Runnable{
     }
 
     public void moveToNextFloor() {
-        if (currentFloorLevel < Floor.getFloorList().size()-1 && this.direction == Direction.UP) {
-            incrementFloorLevel();
-        } else if ((currentFloorLevel > 0) && this.direction == Direction.DOWN) {
-            decrementFloorLevel();
-        } else {
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+        if (checkIfSomebodyWantsToGetOut() || checkIfSomebodyWantsToGetIn()) {
+
+            if (currentFloorLevel < Floor.getFloorList().size() - 1 && this.direction == Direction.UP) {
+                informObserverAboutChangingFloorLevel(currentFloorLevel + 1);
+                incrementFloorLevel();
+            } else if ((currentFloorLevel > 0) && this.direction == Direction.DOWN) {
+                informObserverAboutChangingFloorLevel(currentFloorLevel - 1);
+                decrementFloorLevel();
             }
-            return;
         }
-        setChanged();
-        notifyObservers(getCurrentFloorLevel());
     }
 
 
@@ -119,62 +131,7 @@ public class Elevator extends Observable implements Runnable{
     @Override
     public void run() {
         while (true) {
-            if (checkIfSomebodyWantsToGetOut() || checkIfSomebodyWantsToGetIn()) {
-                setChanged();
-                notifyObservers(currentFloorLevel);
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
 
-            if (destinationFloorLevel - currentFloorLevel > 0) {
-                setDirection(Direction.UP);
-            }
-            else if (destinationFloorLevel - currentFloorLevel < 0){
-                setDirection(Direction.DOWN);
-            } else {
-                setDirection(Direction.NONE);
-            }
-
-
-            if (direction == Direction.NONE) {
-                if (peopleList.isEmpty()) {
-
-                    if (!(externalQueue.size() == 0)) {
-                        setDestinationFloorLevel(externalQueue.peek().getCurrentFloor().getLevel());
-                    }
-                    else {
-                        notifyObservers(currentFloorLevel);
-                    }
-
-                } else {
-                    ArrayList<Integer> temp = new ArrayList<>();
-                    for (int i = 0; i < peopleList.size(); i++) {
-                        temp.add(peopleList.get(i).getDestFloor().getLevel());
-                    }
-
-                    int highestDestFloor = Collections.max(temp);
-                    int lowestDestFloor = Collections.min(temp);
-
-                    if (highestDestFloor - currentFloorLevel > currentFloorLevel - lowestDestFloor) {
-                        destinationFloorLevel = highestDestFloor;
-                    } else {
-                        destinationFloorLevel = lowestDestFloor;
-                    }
-
-                }
-
-            } else {
-                moveToNextFloor();
-            }
-
-            try {
-                Thread.sleep(200);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
         }
     }
 }
