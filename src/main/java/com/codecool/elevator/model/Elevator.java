@@ -1,5 +1,7 @@
 package com.codecool.elevator.model;
 
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 import java.util.*;
 
 public class Elevator extends Observable implements Runnable{
@@ -7,14 +9,16 @@ public class Elevator extends Observable implements Runnable{
     private int id;
     private int currentFloorLevel = 0;
     private List<Person> peopleList = new ArrayList<>();
-    private Queue<Integer> destinationsQueue = new LinkedList<>();
+    private int destinationFloorLevel = 0;
     private Direction direction = Direction.NONE;
 
+    private static PropertyChangeSupport support;
     private static Elevator[] elevatorPool;
-    private static Queue<Integer> externalQueue = new LinkedList<>();
+    private static Queue<Person> externalQueue = new LinkedList<>();
     private static int idSequence = 0;
 
     public Elevator() {
+        support = new PropertyChangeSupport(this);
         this.id = idSequence++;
     }
 
@@ -26,26 +30,45 @@ public class Elevator extends Observable implements Runnable{
         return elevatorPool;
     }
 
+    public int getDestinationFloorLevel() {
+        return destinationFloorLevel;
+    }
+
     public static void setElevatorPool(Elevator[] elevatorPool) {
         Elevator.elevatorPool = elevatorPool;
+    }
+
+    public void addPropertyChangeListener(PropertyChangeListener pcl) {
+        support.addPropertyChangeListener(pcl);
+    }
+
+    public void removePropertyChangeListener(PropertyChangeListener pcl) {
+        support.removePropertyChangeListener(pcl);
+    }
+
+    public void setDestinationFloorLevel(int newFloorLevel) {
+        destinationFloorLevel =  newFloorLevel;
     }
 
     public synchronized int getCurrentFloorLevel() {
         return currentFloorLevel;
     }
 
-    public synchronized void incrementFloorLevel() {
-        currentFloorLevel++;
+    public void incrementFloorLevel() {
+        if (currentFloorLevel < Floor.getFloorList().size()-1) currentFloorLevel++;
     }
 
-    public synchronized void decrementFloorLevel() {
-        currentFloorLevel--;
+    public void decrementFloorLevel() {
+        if (currentFloorLevel > 0) currentFloorLevel--;
     }
 
     public List<Person> getPeopleList() {
         return peopleList;
     }
 
+    public static Queue<Person> getExternalQueue() {
+        return externalQueue;
+    }
     public void setPeopleList(List<Person> peopleList) {
         this.peopleList = peopleList;
     }
@@ -54,16 +77,8 @@ public class Elevator extends Observable implements Runnable{
         this.currentFloorLevel = currentFloorLevel;
     }
 
-    public Queue<Integer> getDestinationsQueue() {
-        return destinationsQueue;
-    }
-
     public boolean checkIfPersonIsInside(Person person) {
         return peopleList.contains(person);
-    }
-
-    public void addToDestinationsQueue(int destinationFloorLevel) {
-        this.destinationsQueue.add(destinationFloorLevel);
     }
 
     public void setDirection(Direction direction) {
@@ -74,14 +89,13 @@ public class Elevator extends Observable implements Runnable{
         return direction;
     }
 
-    public void addPerson(Person person) {
-        this.peopleList.add(person);
+
+    public static void addToExternalQueue(Person person) {
+        externalQueue.add(person);
     }
 
-    public void checkForExternalCall() {
-        if (externalQueue.size() > 0) {
-            this.destinationsQueue.add(externalQueue.poll());
-        }
+    public static void removeFromExternalQueue(Person person) {
+        externalQueue.remove(person);
     }
 
     public static void addToExternalQueue(int floorLevel) {
@@ -89,45 +103,47 @@ public class Elevator extends Observable implements Runnable{
     }
 
     public void moveToNextFloor() {
-        if (currentFloorLevel < Floor.getFloorList().size()-1 && this.direction.equals(Direction.UP)) {
+        int beforeMovement = currentFloorLevel;
+        if (direction == Direction.NONE) {
+            return;
+        } else if (direction == Direction.UP) {
             incrementFloorLevel();
-        } else if (currentFloorLevel > 0 && this.direction.equals(Direction.DOWN)) {
+        } else if (direction == Direction.DOWN) {
             decrementFloorLevel();
         }
-        setChanged();
-        notifyObservers(getCurrentFloorLevel());
-        System.out.println("moved to " + getCurrentFloorLevel());
-        System.out.println("orders: " + this.destinationsQueue);
-        if (destinationsQueue.peek() == currentFloorLevel) {
-            System.out.println("JESTEM TU");
-            this.direction = Direction.NONE;
-            destinationsQueue.poll();
-        }
+        support.firePropertyChange("currentFloor", this, currentFloorLevel);
     }
 
-
+    public void informPeopleAboutCurrentPosition() {
+        support.firePropertyChange("currentFloor", this, currentFloorLevel);
+    }
 
     @Override
     public void run() {
         while (true) {
-            if (direction == Direction.NONE) {
-                if (destinationsQueue.isEmpty()) {
-                    checkForExternalCall();
-                }
-                else {
-                    setDirection((destinationsQueue.peek()-getCurrentFloorLevel() > 0) ? Direction.UP:Direction.DOWN);
-                }
+            informPeopleAboutCurrentPosition();
+            System.out.println("MOVEMENT IN DIRECTION: " + direction);
+            if (!peopleList.isEmpty()) {
+                destinationFloorLevel = peopleList.get(0).getDestFloor().getLevel();
             }
-            else {
-                moveToNextFloor();
+            if (destinationFloorLevel - currentFloorLevel < 0) {
+                setDirection(Direction.DOWN);
+            } else if (destinationFloorLevel - currentFloorLevel > 0) {
+                setDirection(Direction.UP);
+            } else {
+                setDirection(Direction.NONE);
             }
 
+            if (direction != Direction.NONE) {
+                moveToNextFloor();
+            } else {
+                informPeopleAboutCurrentPosition();
+            }
             try {
-                Thread.sleep(1000);
+                Thread.sleep(500);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-
         }
     }
 }

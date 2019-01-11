@@ -10,11 +10,7 @@ public class Floor {
 
     private int currentCap;
     private int level;
-    private HashMap<Direction, LinkedList<Person>> peopleQueue = new HashMap<>();
-    {
-        peopleQueue.put(Direction.UP, new LinkedList<>());
-        peopleQueue.put(Direction.DOWN, new LinkedList<>());
-    }
+    private LinkedList<Person> peopleQueue = new LinkedList<>();
 
     public static List<Floor> getFloorList() {
         return floorList;
@@ -37,18 +33,17 @@ public class Floor {
     }
 
     public void addPerson(Person person) {
-        peopleQueue.get(person.getDesiredDirection()).add(person);
-        currentCap++;
+        peopleQueue.add(person);
+        refreshCurrentCap();
     };
 
     public void removePersonFromQueue(Person person) {
-        Direction personDirection = person.getDesiredDirection();
-        peopleQueue.get(personDirection).remove(person);
-        currentCap--;
+        peopleQueue.remove(person);
+        refreshCurrentCap();
     }
 
-    public LinkedList<Person> getPeopleByDesiredDirection(Direction direction) {
-        return peopleQueue.get(direction);
+    public void refreshCurrentCap() {
+        this.currentCap = peopleQueue.size();
     }
 
     public static Floor getRandomFloor() {

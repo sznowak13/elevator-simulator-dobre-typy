@@ -1,5 +1,7 @@
 package com.codecool.elevator.model;
 
+import com.codecool.elevator.controller.ElevatorController;
+
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -9,6 +11,7 @@ public class Building implements Runnable{
     private List<Floor> floorList = new ArrayList<>();
     private Elevator[] elevatorPool;
     private Queue<Person> peoplePool = new LinkedList<>();
+    private ElevatorController Andrzej;
 
     public Building() {
         this(Consts.FLOORS_AMOUNT, Consts.ELEVATORS_AMOUNT);
@@ -18,18 +21,7 @@ public class Building implements Runnable{
         createPeople(floorsAmount * Consts.MAX_FLOOR_CAP);
         createFloors(floorsAmount);
         createElevators(elevatorsAmount);
-    }
-
-    public Elevator[] getElevatorPool() {
-        return elevatorPool;
-    }
-
-    public List<Floor> getFloorList() {
-        return floorList;
-    }
-
-    public Queue<Person> getPeoplePool() {
-        return peoplePool;
+        Andrzej = new ElevatorController();
     }
 
     private void createPeople(int amount) {
@@ -57,6 +49,7 @@ public class Building implements Runnable{
 
     @Override
     public void run() {
+        new Thread(Andrzej).start();
         for (Elevator elevator: elevatorPool) {
             new Thread(elevator).start();
         }
@@ -73,8 +66,14 @@ public class Building implements Runnable{
             person.callAnElevator();
 
             System.out.println(peoplePool.size());
-            System.out.println("person is Going to: " + person.getDestFloor().getLevel());
-            System.out.println("person is Going from: " + person.getCurrentFloor().getLevel());
+            for (Floor floor: floorList) {
+                System.out.println("Level: " + floor.getLevel() + " Size: " + floor.getCurrentCap());
+            }
+            for (Elevator elevator: elevatorPool) {
+                System.out.println("Current level: " + elevator.getCurrentFloorLevel() + " Current Capacity: " + elevator.getPeopleList().size() + " Dir: " + elevator.getDirection());
+            }
+
+            System.out.println("TU JESTEM: " + person.getCurrentFloor().getLevel() + " A TU CHCE BYC: " + person.getDestFloor().getLevel());
             try {
                 Thread.sleep(Consts.PEOPLE_SPAWN_TIME*1000);
             } catch (InterruptedException e) {
