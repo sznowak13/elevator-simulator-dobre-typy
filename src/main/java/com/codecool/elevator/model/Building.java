@@ -32,6 +32,14 @@ public class Building implements Runnable{
         Person.setPeoplePool(this.peoplePool);
     }
 
+    public Elevator[] getElevatorPool() {
+        return this.Andrzej.getElevatorPool();
+    }
+
+    public List<Floor> getFloorList() {
+        return this.floorList;
+    }
+
     private void createElevators(int amount) {
         this.elevatorPool = new Elevator[amount];
         for (int i = 0; i < amount; i++) {

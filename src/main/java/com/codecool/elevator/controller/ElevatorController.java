@@ -21,6 +21,10 @@ public class ElevatorController implements Runnable, PropertyChangeListener {
         }
     }
 
+    public Elevator[] getElevatorPool() {
+        return this.elevatorPool;
+    }
+
     private boolean checkExternalQueueForCall() {
         return !externalCallQueue.isEmpty();
     }

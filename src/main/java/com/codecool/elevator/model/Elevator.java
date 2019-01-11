@@ -69,6 +69,7 @@ public class Elevator extends Observable implements Runnable{
     public static Queue<Person> getExternalQueue() {
         return externalQueue;
     }
+
     public void setPeopleList(List<Person> peopleList) {
         this.peopleList = peopleList;
     }
@@ -89,17 +90,12 @@ public class Elevator extends Observable implements Runnable{
         return direction;
     }
 
-
     public static void addToExternalQueue(Person person) {
         externalQueue.add(person);
     }
 
     public static void removeFromExternalQueue(Person person) {
         externalQueue.remove(person);
-    }
-
-    public static void addToExternalQueue(int floorLevel) {
-        externalQueue.add(floorLevel);
     }
 
     public void moveToNextFloor() {
