@@ -3,6 +3,8 @@ package com.codecool.elevator.model;
 import java.util.*;
 
 public class Elevator extends Observable implements Runnable{
+
+    private int id;
     private int currentFloorLevel = 0;
     private List<Person> peopleList = new ArrayList<>();
     private Queue<Integer> destinationsQueue = new LinkedList<>();
@@ -10,6 +12,15 @@ public class Elevator extends Observable implements Runnable{
 
     private static Elevator[] elevatorPool;
     private static Queue<Integer> externalQueue = new LinkedList<>();
+    private static int idSequence = 0;
+
+    public Elevator() {
+        this.id = idSequence++;
+    }
+
+    public int getId() {
+        return id;
+    }
 
     public static Elevator[] getElevatorPool() {
         return elevatorPool;
@@ -50,6 +61,7 @@ public class Elevator extends Observable implements Runnable{
     public boolean checkIfPersonIsInside(Person person) {
         return peopleList.contains(person);
     }
+
     public void addToDestinationsQueue(int destinationFloorLevel) {
         this.destinationsQueue.add(destinationFloorLevel);
     }

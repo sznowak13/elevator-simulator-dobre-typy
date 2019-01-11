@@ -20,6 +20,18 @@ public class Building implements Runnable{
         createElevators(elevatorsAmount);
     }
 
+    public Elevator[] getElevatorPool() {
+        return elevatorPool;
+    }
+
+    public List<Floor> getFloorList() {
+        return floorList;
+    }
+
+    public Queue<Person> getPeoplePool() {
+        return peoplePool;
+    }
+
     private void createPeople(int amount) {
         for (int i = 0; i < amount; i++) {
             peoplePool.add(new Person());
@@ -61,13 +73,6 @@ public class Building implements Runnable{
             person.callAnElevator();
 
             System.out.println(peoplePool.size());
-            for (Floor floor: floorList) {
-                System.out.println("Level: " + floor.getLevel() + " Size: " + floor.getCurrentCap());
-            }
-            for (Elevator elevator: elevatorPool) {
-                System.out.println("Current level: " + elevator.getCurrentFloorLevel() + " Current Capacity: " + elevator.getPeopleList().size() + " Dir: " + elevator.getDirection());
-            }
-
             System.out.println("person is Going to: " + person.getDestFloor().getLevel());
             System.out.println("person is Going from: " + person.getCurrentFloor().getLevel());
             try {
