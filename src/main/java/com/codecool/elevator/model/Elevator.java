@@ -1,18 +1,21 @@
 package com.codecool.elevator.model;
 
+import com.codecool.elevator.controller.ElevatorController;
+
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.*;
 
 public class Elevator implements Runnable {
     private int currentFloorLevel = 0;
-    private List<Person> peopleList = new ArrayList<>();
     private int destinationFloorLevel = 0;
+    private boolean isMoving;
     private Direction direction = Direction.NONE;
+    private List<Person> peopleList = new ArrayList<>();
 
     private static PropertyChangeSupport support;
     private static Elevator[] elevatorPool;
-    private static Queue<Person> externalQueue = new LinkedList<>();
+
 
     public static Elevator[] getElevatorPool() {
         return elevatorPool;
@@ -63,26 +66,26 @@ public class Elevator implements Runnable {
         return peopleList;
     }
 
-    public static Queue<Person> getExternalQueue() {
-        return externalQueue;
-    }
-
     public Direction getDirection() {
         return direction;
     }
 
-
-    public static void addToExternalQueue(Person person) {
-        externalQueue.add(person);
-    }
-
-    public static void removeFromExternalQueue(Person person) {
-        externalQueue.remove(person);
+    private int getNextDestinationFloorLevel() {
+        SortedSet<Integer> internalOrders = new TreeSet<>();
+        for (Person person: peopleList) {
+            internalOrders.add(person.getDestFloor().getLevel());
+        }
+        if (direction == Direction.DOWN) {
+            return internalOrders.first();
+        } else if (direction == Direction.UP) {
+            return internalOrders.last();
+        } else {
+            return internalOrders.first();
+        }
     }
 
 
     public void moveToNextFloor() {
-        int beforeMovement = currentFloorLevel;
         if (direction == Direction.NONE) {
             return;
         } else if (direction == Direction.UP) {
@@ -90,34 +93,35 @@ public class Elevator implements Runnable {
         } else if (direction == Direction.DOWN) {
             decrementFloorLevel();
         }
+        System.out.println("MOVING IN DIRECTION : " + direction + "FLOOR CURRENT/DEST: " + currentFloorLevel + "/" + destinationFloorLevel);
+        informAboutCurrentPosition();
+    }
+
+    public void informAboutCurrentPosition() {
         support.firePropertyChange("currentFloor", this, currentFloorLevel);
     }
 
-    public void informPeopleAboutCurrentPosition() {
-        support.firePropertyChange("currentFloor", this, currentFloorLevel);
-    }
+
 
     @Override
     public void run() {
         while (true) {
-            informPeopleAboutCurrentPosition();
-            System.out.println("MOVEMENT IN DIRECTION: " + direction);
             if (!peopleList.isEmpty()) {
-                destinationFloorLevel = peopleList.get(0).getDestFloor().getLevel();
+                destinationFloorLevel = getNextDestinationFloorLevel();
+            } else {
+                direction = Direction.NONE;
             }
+
             if (destinationFloorLevel - currentFloorLevel < 0) {
                 setDirection(Direction.DOWN);
             } else if (destinationFloorLevel - currentFloorLevel > 0) {
                 setDirection(Direction.UP);
-            } else {
-                setDirection(Direction.NONE);
             }
 
             if (direction != Direction.NONE) {
                 moveToNextFloor();
-            } else {
-                informPeopleAboutCurrentPosition();
             }
+
             try {
                 Thread.sleep(500);
             } catch (InterruptedException e) {

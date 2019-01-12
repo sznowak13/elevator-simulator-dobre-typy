@@ -76,7 +76,7 @@ public class Building implements Runnable{
 
             System.out.println("TU JESTEM: " + person.getCurrentFloor().getLevel() + " A TU CHCE BYC: " + person.getDestFloor().getLevel());
             try {
-                Thread.sleep(4000);
+                Thread.sleep(2000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }

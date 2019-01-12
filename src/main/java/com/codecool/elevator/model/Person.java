@@ -1,13 +1,17 @@
 package com.codecool.elevator.model;
 
+import com.codecool.elevator.controller.ElevatorController;
+
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.ArrayList;
 import java.util.Queue;
 
 public class Person implements PropertyChangeListener {
     private Floor currentFloor;
     private Floor destFloor;
     private Direction desiredDirection;
+    private ArrayList<Object> elevatorCalling;
 
     private static Queue<Person> peoplePool;
 
@@ -48,11 +52,32 @@ public class Person implements PropertyChangeListener {
         setDesiredDirection((destFloor.getLevel() - currentFloor.getLevel() < 0) ? Direction.UP : Direction.DOWN);
         watchAllElevators();
         floor.addPerson(this);
-        callAnElevator();
+        elevatorCalling = new ArrayList<>();
+        elevatorCalling.add(getCurrentFloor().getLevel());
+        elevatorCalling.add(desiredDirection);
+        Elevator anyEmptyElevator = getElevatorIfAnyEmptyOneIsOnMyFloor();
+        if (anyEmptyElevator != null) {
+            getInElevator(anyEmptyElevator);
+        } else {
+            callAnElevator();
+        }
+    }
+
+    public ArrayList<Object> getElevatorCalling() {
+        return elevatorCalling;
+    }
+
+    private Elevator getElevatorIfAnyEmptyOneIsOnMyFloor() {
+        for (Elevator elevator: Elevator.getElevatorPool()) {
+            if (elevator.getCurrentFloorLevel() == currentFloor.getLevel() && elevator.getDirection() == Direction.NONE) {
+                return elevator;
+            }
+        }
+        return null;
     }
 
     public void callAnElevator() {
-        Elevator.addToExternalQueue(this);
+        ElevatorController.callAnElevator(elevatorCalling);
     }
 
     public void watchAllElevators() {
@@ -67,7 +92,7 @@ public class Person implements PropertyChangeListener {
     public void getInElevator(Elevator elevator) {
         currentFloor.removePersonFromQueue(this);
         elevator.getPeopleList().add(this);
-        Elevator.removeFromExternalQueue(this);
+        ElevatorController.removePersonsExternalCalling(elevatorCalling);
     }
 
     public void getOutTheElevator(Elevator elevator) {
