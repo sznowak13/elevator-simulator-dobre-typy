@@ -47,6 +47,14 @@ public class Building implements Runnable{
         Floor.setFloorList(this.floorList);
     }
 
+    public Elevator[] getElevatorPool() {
+        return elevatorPool;
+    }
+
+    public List<Floor> getFloorList() {
+        return floorList;
+    }
+
     @Override
     public void run() {
         new Thread(Andrzej).start();

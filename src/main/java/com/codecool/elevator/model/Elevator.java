@@ -1,6 +1,8 @@
 package com.codecool.elevator.model;
 
 import com.codecool.elevator.controller.ElevatorController;
+import com.codecool.elevator.view.ElevatorBlock;
+import javafx.beans.Observable;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
