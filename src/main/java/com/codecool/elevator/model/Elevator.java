@@ -9,12 +9,14 @@ import java.beans.PropertyChangeSupport;
 import java.util.*;
 
 public class Elevator implements Runnable {
+    private int id;
     private int currentFloorLevel = 0;
     private int destinationFloorLevel = 0;
     private boolean isMoving;
     private Direction direction = Direction.NONE;
     private List<Person> peopleList = new ArrayList<>();
 
+    private static int idSequence = 0;
     private static PropertyChangeSupport support;
     private static Elevator[] elevatorPool;
 
