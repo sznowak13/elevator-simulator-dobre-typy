@@ -41,7 +41,8 @@ public class ElevatorBlock extends Rectangle implements PropertyChangeListener {
         } else {
             amount = 0;
         }
-
+//        System.out.println(elevator.getCurrentFloorLevel());
+//        System.out.println(elevator.getDirection());
         TranslateTransition tt = new TranslateTransition(Duration.millis(800), this);
         tt.setByY(amount);
         tt.play();

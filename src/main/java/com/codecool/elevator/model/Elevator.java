@@ -97,12 +97,12 @@ public class Elevator implements Runnable {
         } else if (direction == Direction.UP) {
             incrementFloorLevel();
             if (currentFloorLevel == Consts.FLOORS_AMOUNT-1) {
-                setDirection(Direction.DOWN);
+                setDirection(Direction.NONE);
             }
         } else if (direction == Direction.DOWN) {
             decrementFloorLevel();
             if (currentFloorLevel == 0) {
-                setDirection(Direction.UP);
+                setDirection(Direction.NONE);
             }
         }
         informAboutCurrentPosition(floorLevelBeforeMovement);
