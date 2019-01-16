@@ -4,8 +4,8 @@ import java.awt.*;
 
 public class DisplayConfig {
 
-    public final static double SCREEN_WIDTH = Toolkit.getDefaultToolkit().getScreenSize().getWidth() * 0.75;
-    public final static double SCREEN_HEIGHT = Toolkit.getDefaultToolkit().getScreenSize().getHeight() * 0.75;
+    public final static double SCREEN_WIDTH = Toolkit.getDefaultToolkit().getScreenSize().getWidth();
+    public final static double SCREEN_HEIGHT = Toolkit.getDefaultToolkit().getScreenSize().getHeight();
 
     private static double floor_height;
     private static double shaft_width;

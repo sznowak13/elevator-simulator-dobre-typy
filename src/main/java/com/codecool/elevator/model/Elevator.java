@@ -1,9 +1,5 @@
 package com.codecool.elevator.model;
 
-import com.codecool.elevator.controller.ElevatorController;
-import com.codecool.elevator.view.ElevatorBlock;
-import javafx.beans.Observable;
-
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.*;
@@ -43,7 +39,12 @@ public class Elevator implements Runnable {
 
 
     public Elevator() {
+        id = idSequence++;
         support = new PropertyChangeSupport(this);
+    }
+
+    public int getId() {
+        return id;
     }
 
     public void setDestinationFloorLevel(int newFloorLevel) {
@@ -90,19 +91,33 @@ public class Elevator implements Runnable {
 
 
     public void moveToNextFloor() {
+        int floorLevelBeforeMovement = currentFloorLevel;
         if (direction == Direction.NONE) {
             return;
         } else if (direction == Direction.UP) {
             incrementFloorLevel();
+            if (currentFloorLevel == Consts.FLOORS_AMOUNT-1) {
+                setDirection(Direction.DOWN);
+            }
         } else if (direction == Direction.DOWN) {
             decrementFloorLevel();
+            if (currentFloorLevel == 0) {
+                setDirection(Direction.UP);
+            }
         }
-        System.out.println("MOVING IN DIRECTION : " + direction + "FLOOR CURRENT/DEST: " + currentFloorLevel + "/" + destinationFloorLevel);
-        informAboutCurrentPosition();
+        informAboutCurrentPosition(floorLevelBeforeMovement);
     }
 
-    public void informAboutCurrentPosition() {
-        support.firePropertyChange("currentFloor", this, currentFloorLevel);
+    private void setupDirection() {
+        if (destinationFloorLevel - currentFloorLevel < 0) {
+            setDirection(Direction.DOWN);
+        } else if (destinationFloorLevel - currentFloorLevel > 0) {
+            setDirection(Direction.UP);
+        }
+    }
+
+    public void informAboutCurrentPosition(int value) {
+        support.firePropertyChange("currentFloor", this, value);
     }
 
 
@@ -116,18 +131,14 @@ public class Elevator implements Runnable {
                 direction = Direction.NONE;
             }
 
-            if (destinationFloorLevel - currentFloorLevel < 0) {
-                setDirection(Direction.DOWN);
-            } else if (destinationFloorLevel - currentFloorLevel > 0) {
-                setDirection(Direction.UP);
-            }
+            setupDirection();
 
             if (direction != Direction.NONE) {
                 moveToNextFloor();
             }
 
             try {
-                Thread.sleep(500);
+                Thread.sleep(1500);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }

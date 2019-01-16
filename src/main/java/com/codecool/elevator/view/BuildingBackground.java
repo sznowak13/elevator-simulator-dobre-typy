@@ -1,6 +1,9 @@
 package com.codecool.elevator.view;
 
 import com.codecool.elevator.model.Building;
+import com.codecool.elevator.model.Elevator;
+import javafx.geometry.Pos;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
@@ -18,15 +21,18 @@ public class BuildingBackground extends StackPane {
 
         for (int i = 0; i < DisplayConfig.getFloorsAmount(); i++) {
             Rectangle floor = new Rectangle(DisplayConfig.getFloor_width(), DisplayConfig.getFloor_height());
-            floor.setFill(Color.BLACK);
+            floor.setFill(Color.LIGHTGRAY);
+            floor.setStroke(Color.BLACK);
             floor.setStrokeType(StrokeType.INSIDE);
             floors.getChildren().add(floor);
         }
         for (int i = 0; i < DisplayConfig.getElevatorsAmount(); i++) {
-            Rectangle elevatorShaft = new Rectangle(DisplayConfig.getShaft_width(), DisplayConfig.SCREEN_HEIGHT);
-            elevatorShaft.setStroke(Color.DARKGRAY);
-            elevatorShaft.setStrokeType(StrokeType.INSIDE);
-            elevatorShaft.setFill(Color.GRAY);
+            GridPane elevatorShaft = new GridPane();
+            elevatorShaft.setAlignment(Pos.BOTTOM_LEFT);
+
+            ElevatorBlock elevator = new ElevatorBlock((int)DisplayConfig.getShaft_width(), (int)DisplayConfig.getFloor_height(), building.getElevatorPool()[i]);
+            elevatorShaft.getChildren().add(elevator);
+
             elevatorShafts.getChildren().add(elevatorShaft);
         }
         bg.getChildren().addAll(elevatorShafts, floors);

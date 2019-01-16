@@ -4,6 +4,7 @@ import com.codecool.elevator.controller.ElevatorController;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
 import java.util.Queue;
 
@@ -12,6 +13,12 @@ public class Person implements PropertyChangeListener {
     private Floor destFloor;
     private Direction desiredDirection;
     private ArrayList<Object> elevatorCalling;
+    private PropertyChangeSupport support;
+
+
+    public Person() {
+        support = new PropertyChangeSupport(this);
+    }
 
     private static Queue<Person> peoplePool;
 

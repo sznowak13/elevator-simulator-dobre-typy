@@ -81,21 +81,22 @@ public class ElevatorController implements Runnable, PropertyChangeListener {
                 floorsInDesiredDirection.add(externalCallFloorLevel);
             }
         }
-        System.out.println(floorsInDesiredDirection);
         if (floorsInDesiredDirection.size() == 0) {
             throw new NullPointerException();
         }
         if (direction == Direction.UP) {
+            for (ArrayList<Object> externalCall : externalCallQueue) {
+                if (externalCall.get(0) == floorsInDesiredDirection.first()) externalCallQueue.remove(externalCall);
+            }
             return floorsInDesiredDirection.first();
         } else if (direction == Direction.DOWN){
+            for (ArrayList<Object> externalCall : externalCallQueue) {
+                if (externalCall.get(0) == floorsInDesiredDirection.last()) externalCallQueue.remove(externalCall);
+            }
             return floorsInDesiredDirection.last();
         } else {
-            for (int e : floorsInDesiredDirection) {
-                if (e - currentFloorLevel < 0) {
-                    e = -(e - currentFloorLevel);
-                } else {
-                    e = e - currentFloorLevel;
-                }
+            for (ArrayList<Object> externalCall : externalCallQueue) {
+                if (externalCall.get(0) == floorsInDesiredDirection.first()) externalCallQueue.remove(externalCall);
             }
             return floorsInDesiredDirection.first();
         }
@@ -106,16 +107,7 @@ public class ElevatorController implements Runnable, PropertyChangeListener {
         while (true) {
             if (checkExternalQueueForCall() && checkIfThereIsAnyFreeElevator()) {
                 Elevator freeElevator = getFreeElevator();
-                try {
-                    freeElevator.setDestinationFloorLevel(getClosestExternalCallLevel(Direction.NONE, freeElevator.getCurrentFloorLevel()));
-                } catch (NullPointerException ex) {
-                    System.out.println(ex);
-                }
-            }
-            try {
-                Thread.sleep(100);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+                freeElevator.setDestinationFloorLevel(getClosestExternalCallLevel(Direction.NONE, freeElevator.getCurrentFloorLevel()));
             }
         }
     }
