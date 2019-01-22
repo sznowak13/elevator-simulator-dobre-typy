@@ -1,11 +1,39 @@
-package com.codecool.elevator.model;
+package main.java.com.codecool.elevator.model;
 
-import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.TreeSet;
 
-public class Elevator {
+public class Elevator extends MovingEntity {
+    private int id;
+    private static int instanceCounter = 0;
     private int currentFloorLevel;
-    private static int maxPeopleCap;
-    private int currentCap;
-    private HashMap<Integer, Person[]> destFloor;
-    private Direction direction = Direction.NONE;
+    private int destinationFloorLevel;
+    private boolean isMoving;
+    private List<Person> peopleInsideList;
+    private TreeSet<Integer> internalOrders;
+
+
+
+    public Elevator() {
+        super();
+        this.id = instanceCounter++;
+        this.currentFloorLevel = 0;
+        this.isMoving = false;
+        this.peopleInsideList = new ArrayList<>();
+        this.internalOrders = new TreeSet<>();
+    }
+
+    @Override
+    public void move() {
+
+    }
+
+    public void updateDirection() {
+
+    }
+
+    public void work() {
+
+    }
 }

@@ -1,19 +1,21 @@
-package com.codecool.elevator.model;
+package main.java.com.codecool.elevator.model;
 
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.Queue;
+import java.util.*;
 
 
 public class Floor {
-    private HashMap<Direction, Queue<Person>> peopleQueue = new HashMap<Direction, Queue<Person>>();
-    {
-        peopleQueue.put(Direction.UP, new LinkedList<Person>());
-        peopleQueue.put(Direction.DOWN, new LinkedList<Person>());
-    };
+    private int level;
+    private List<Person> peopleList;
+    private List<Person> availableElevators;
 
-    public void addPerson(Person person) {
-        //peopleQueue.get(person.getDesiredDirection()).add(person);
-    };
 
+    public Floor(int level) {
+        this.level = level;
+        this.peopleList = new ArrayList<>();
+        this.availableElevators = new ArrayList<>();
+    }
+
+    public void processArrivedElevator(Elevator elevator) {
+
+    }
 }

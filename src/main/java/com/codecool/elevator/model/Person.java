@@ -1,27 +1,31 @@
-package com.codecool.elevator.model;
+package main.java.com.codecool.elevator.model;
 
-public class Person {
-    private Floor currentFloor;
-    private Floor destFloor;
-    private Direction desiredDirection;
+public class Person extends MovingEntity {
+    private int currentFloorLevel;
+    private int destinationFloorLevel;
 
-    public Floor getCurrentFloor() {
-        return currentFloor;
+    public Person() {
+        super();
     }
 
-    public Floor getDestFloor() {
-        return destFloor;
-    }
-
-    public Direction getDesiredDirection() {
-        return desiredDirection;
-    }
-
-    public void getInAnElevator(Elevator elevator) {
+    public void spawn(int startFloor) {
 
     }
 
-    public void getOutTheElevator() {
+    public void callAnElevator() {
+
+    }
+
+    public void getInElevator() {
+
+    }
+
+    public void checkIfSuitableElevator() {
+
+    }
+
+    @Override
+    public void move() {
 
     }
 }

@@ -1,23 +1,35 @@
-package com.codecool.elevator.model;
+package main.java.com.codecool.elevator.model;
 
-public class Building {
-    private Floor[] floorList;
-    private Elevator[] elevatorList;
-    private Person[] peopleList;
+import java.util.List;
+import java.util.Queue;
 
-    public Building() {
+public class Building implements Runnable{
+    private static Building ourInstance = new Building();
+    private List<Floor> floorList;
+    private Queue<Person> peoplePool;
+
+
+    private Building() {
+    }
+
+    public static Building getInstance() {
+        return ourInstance;
+    }
+
+    public void createPeople(int amount) {
 
     }
 
-    public Building(int floorsAmount, int elevatorsAmount) {
+    public void createFloors(int amount) {
 
     }
 
-    public void createPeople() {
+    public void createElevators(int amount) {
 
     }
 
-    public void addPersonToFloor(Person person, Floor floor) {
+    @Override
+    public void run() {
 
     }
 }
