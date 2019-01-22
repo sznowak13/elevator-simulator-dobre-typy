@@ -1,92 +1,35 @@
 package com.codecool.elevator.model;
 
-import com.codecool.elevator.controller.ElevatorController;
-
-import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 
 public class Building implements Runnable{
-    private List<Floor> floorList = new ArrayList<>();
-    private Elevator[] elevatorPool;
-    private Queue<Person> peoplePool = new LinkedList<>();
-    private ElevatorController Andrzej;
+    private static Building ourInstance = new Building();
+    private List<Floor> floorList;
+    private Queue<Person> peoplePool;
 
-    public Building() {
-        this(Consts.FLOORS_AMOUNT, Consts.ELEVATORS_AMOUNT);
+
+    private Building() {
     }
 
-    public Building(int floorsAmount, int elevatorsAmount) {
-        createPeople(floorsAmount * Consts.MAX_FLOOR_CAP);
-        createFloors(floorsAmount);
-        createElevators(elevatorsAmount);
-        Andrzej = new ElevatorController();
+    public static Building getInstance() {
+        return ourInstance;
     }
 
-    private void createPeople(int amount) {
-        for (int i = 0; i < amount; i++) {
-            peoplePool.add(new Person());
-        }
+    public void createPeople(int amount) {
 
-        Person.setPeoplePool(this.peoplePool);
     }
 
-    public Elevator[] getElevatorPool() {
-        return this.Andrzej.getElevatorPool();
+    public void createFloors(int amount) {
+
     }
 
-    public List<Floor> getFloorList() {
-        return this.floorList;
-    }
+    public void createElevators(int amount) {
 
-    private void createElevators(int amount) {
-        this.elevatorPool = new Elevator[amount];
-        for (int i = 0; i < amount; i++) {
-            this.elevatorPool[i] = new Elevator();
-        }
-        Elevator.setElevatorPool(this.elevatorPool);
-    }
-
-    private void createFloors(int amount) {
-        for (int i = 0; i < amount; i++) {
-            this.floorList.add(new Floor());
-        }
-        Floor.setFloorList(this.floorList);
     }
 
     @Override
     public void run() {
-        new Thread(Andrzej).start();
-        for (Elevator elevator: elevatorPool) {
-            new Thread(elevator).start();
-        }
 
-
-        while (true) {
-            Floor randomFloor;
-            do {
-                randomFloor = Floor.getRandomFloor();
-            } while (randomFloor.getCurrentCap() >= Consts.MAX_FLOOR_CAP);
-
-            Person person = peoplePool.poll();
-            person.spawn(randomFloor);
-            person.callAnElevator();
-
-            System.out.println(peoplePool.size());
-            for (Floor floor: floorList) {
-                System.out.println("Level: " + floor.getLevel() + " Size: " + floor.getCurrentCap());
-            }
-            for (Elevator elevator: elevatorPool) {
-                System.out.println("Current level: " + elevator.getCurrentFloorLevel() + " Current Capacity: " + elevator.getPeopleList().size() + " Dir: " + elevator.getDirection());
-            }
-
-            System.out.println("TU JESTEM: " + person.getCurrentFloor().getLevel() + " A TU CHCE BYC: " + person.getDestFloor().getLevel());
-            try {
-                Thread.sleep(Consts.PEOPLE_SPAWN_TIME*1000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
     }
 }
