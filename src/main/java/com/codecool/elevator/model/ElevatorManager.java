@@ -2,11 +2,12 @@ package com.codecool.elevator.model;
 
 import com.codecool.elevator.view.DisplayConfig;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ElevatorManager implements Runnable {
     private Elevator[] elevatorPool;
-    private List<Call> externalCalls;
+    private List<Call> externalCalls = new ArrayList<>();
 
 
     private static ElevatorManager ourInstance = new ElevatorManager();
@@ -32,6 +33,10 @@ public class ElevatorManager implements Runnable {
 
     public Elevator[] getElevatorPool() {
         return elevatorPool;
+    }
+
+    public void addExternalCall(Call call){
+        this.externalCalls.add(call);
     }
 
     @Override

@@ -14,8 +14,8 @@ public class DisplayConfig {
     public final static Color FLOOR_COLOR = Color.GRAY;
     public final static Color ELEVATOR_COLOR = Color.RED;
     public final static Color PERSON_COLOR = Color.BLUE;
-    public final static double SCREEN_WIDTH = Toolkit.getDefaultToolkit().getScreenSize().getWidth()*0.9;
-    public final static double SCREEN_HEIGHT = Toolkit.getDefaultToolkit().getScreenSize().getHeight()*0.9;
+    public final static double SCREEN_WIDTH = Toolkit.getDefaultToolkit().getScreenSize().getWidth()*0.5;
+    public final static double SCREEN_HEIGHT = Toolkit.getDefaultToolkit().getScreenSize().getHeight()*0.5;
 
     public static void setup() {
         FLOOR_HEIGHT = SCREEN_HEIGHT / Config.FLOORS_AMOUNT;

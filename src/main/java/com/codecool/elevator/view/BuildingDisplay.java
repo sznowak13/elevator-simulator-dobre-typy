@@ -76,7 +76,9 @@ public class BuildingDisplay extends Pane {
                     ec.move();
                 }
                 for (PersonController pc : peopleControllers) {
-                    pc.move();
+                    if (pc.getPerson().isSpawned()) {
+                        pc.move();
+                    }
                 }
             }
         }.start();

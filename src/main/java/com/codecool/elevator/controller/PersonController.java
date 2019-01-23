@@ -19,6 +19,10 @@ public class PersonController {
         return display;
     }
 
+    public Person getPerson() {
+        return person;
+    }
+
     public void move() {
         this.person.move();
         this.display.update(person);
