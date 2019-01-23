@@ -40,8 +40,16 @@ public class Building implements Runnable{
         this.Andrzej = ElevatorManager.getInstance();
     }
 
-    public void createElevators(int amount) {
+    public List<Floor> getFloorList() {
+        return floorList;
+    }
 
+    public Queue<Person> getPeoplePool() {
+        return peoplePool;
+    }
+
+    public ElevatorManager getAndrzej() {
+        return Andrzej;
     }
 
     @Override
