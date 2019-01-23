@@ -11,9 +11,16 @@ public class PersonController {
     public PersonController(Person person, PersonBlock display) {
         this.person = person;
         this.display = display;
+        this.display.setLayoutX(person.getPosX());
+        this.display.setLayoutY(person.getPosY());
+    }
+
+    public PersonBlock getPersonBlock() {
+        return display;
     }
 
     public void move() {
-
+        this.person.move();
+        this.display.update(person);
     }
 }
