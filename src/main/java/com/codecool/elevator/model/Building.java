@@ -36,7 +36,7 @@ public class Building implements Runnable{
 
     }
 
-    public void createElevatorManager() {
+    private void createElevatorManager() {
         this.Andrzej = ElevatorManager.getInstance();
     }
 

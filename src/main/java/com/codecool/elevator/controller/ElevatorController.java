@@ -18,7 +18,7 @@ public class ElevatorController {
     }
 
     public void move() {
-
+        this.display.update(this.elevator);
     }
 
     public ElevatorBlock getDisplay() {

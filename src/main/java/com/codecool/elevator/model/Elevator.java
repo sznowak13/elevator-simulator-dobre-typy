@@ -1,12 +1,14 @@
 package com.codecool.elevator.model;
 
+import com.codecool.elevator.view.DisplayConfig;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.TreeSet;
 
-public class Elevator extends MovingEntity {
+public class Elevator extends MovingEntity implements Runnable {
     private int currentFloorLevel;
-    private int destinationFloorLevel;
+    private Integer destinationFloorLevel;
     private boolean isMoving;
     private List<Person> peopleInsideList;
     private TreeSet<Integer> internalOrders;
@@ -21,16 +23,57 @@ public class Elevator extends MovingEntity {
         this.internalOrders = new TreeSet<>();
     }
 
-    @Override
-    public void move() {
-
+    public int getCurrentFloorLevel() {
+        return currentFloorLevel;
     }
 
     public void updateDirection() {
-
+        if (destinationFloorLevel - currentFloorLevel > 0) {
+            this.setDirection(1);
+        } else if (destinationFloorLevel - currentFloorLevel == 0) {
+            this.setDirection(0);
+        } else {
+            this.setDirection(-1);
+        }
     }
 
     public void work() {
 
+    }
+
+    public synchronized TreeSet<Integer> getInternalOrders() {
+        return this.internalOrders;
+    }
+
+    public void addNewCall(int floorLevel) {
+        this.getInternalOrders().add(floorLevel);
+    }
+
+    @Override
+    public void move() {
+        this.setPosY(this.getPosY() - this.getDirection());
+        this.currentFloorLevel = (int) (this.getPosY() / DisplayConfig.FLOOR_HEIGHT);
+    }
+
+    @Override
+    public void run() {
+        while (true) {
+            System.out.println(currentFloorLevel);
+            if (this.getInternalOrders().isEmpty()) {
+                // smth
+            } else {
+                if (this.destinationFloorLevel == null) {
+                    this.destinationFloorLevel = this.getInternalOrders().first();
+                    this.updateDirection();
+                }
+
+                if (currentFloorLevel != destinationFloorLevel) move();
+                try {
+                    Thread.sleep(1);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 }

@@ -1,5 +1,6 @@
 package com.codecool.elevator.view;
 
+import com.codecool.elevator.model.Elevator;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
@@ -11,6 +12,7 @@ public class ElevatorBlock extends Rectangle {
         setStroke(Color.BLACK);
     }
 
-    public void update() {
+    public void update(Elevator elevator) {
+        this.setLayoutY(elevator.getPosY());
     }
 }

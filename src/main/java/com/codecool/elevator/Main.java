@@ -1,6 +1,7 @@
 package com.codecool.elevator;
 
 import com.codecool.elevator.model.Building;
+import com.codecool.elevator.model.Elevator;
 import com.codecool.elevator.view.BuildingDisplay;
 import com.codecool.elevator.view.DisplayConfig;
 import javafx.scene.Scene;
@@ -18,6 +19,11 @@ public class Main extends Application {
         Building building = Building.getInstance();
         BuildingDisplay buildingDisplay = new BuildingDisplay(building);
         new Thread(building).start();
+        new Thread(building.getAndrzej()).start();
+        for (Elevator elevator: building.getAndrzej().getElevatorPool()) {
+            new Thread(elevator).start();
+        }
+
 
         Scene scene = new Scene(buildingDisplay, DisplayConfig.SCREEN_WIDTH, DisplayConfig.SCREEN_HEIGHT);
 

@@ -2,8 +2,7 @@ package com.codecool.elevator.model;
 
 import com.codecool.elevator.view.DisplayConfig;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class ElevatorManager implements Runnable {
     private Elevator[] elevatorPool;
@@ -23,24 +22,62 @@ public class ElevatorManager implements Runnable {
         }
     }
 
-    public void sendElevatorTo(int floorLevel) {
+    public Elevator searchForAvailableElevator(Call externalCall) {
+        int callDirection = externalCall.getDestinationFloorLevel() - externalCall.getStartFloorLevel() > 0 ? 1 : -1;
+        List<Elevator> sameDirectionElevators = new ArrayList<>();
 
-    }
+        for (Elevator elevator : this.getElevatorPool()) {
+            if (elevator.getDirection() == callDirection || elevator.getDirection() == 0) {
+                if ((externalCall.getStartFloorLevel() - elevator.getCurrentFloorLevel()) * callDirection > 0 ) {
+                    sameDirectionElevators.add(elevator);
+                }
+            }
+        }
 
-    public void searchForAvailableElevator(Call externalCall) {
+        if (sameDirectionElevators.isEmpty()) {
+            return null;
+        }
 
+        Elevator tempElevator = sameDirectionElevators.get(0);
+        for (int i = 1; i < sameDirectionElevators.size(); i++) { // starting from 1 because we want to skip the first element as it was already assigned line above.
+            Elevator elevatorToCheck =  sameDirectionElevators.get(i);
+            int floorDifference = Math.abs(elevatorToCheck.getCurrentFloorLevel() - externalCall.getStartFloorLevel());
+            if (floorDifference < tempElevator.getCurrentFloorLevel()) {
+                tempElevator = elevatorToCheck;
+            }
+        }
+
+
+
+        return tempElevator;
     }
 
     public Elevator[] getElevatorPool() {
         return elevatorPool;
     }
 
-    public void addExternalCall(Call call){
+    public synchronized void addExternalCall(Call call){
         this.externalCalls.add(call);
     }
 
     @Override
     public void run() {
+        while (true) {
+            List<Call> tempList = this.getExternalCalls();
+            if (!tempList.isEmpty()) {
+                for (int i = 0; i < tempList.size(); i++) {
+                    Call currentCall = tempList.get(i);
+                    Elevator elevator = this.searchForAvailableElevator(currentCall);
+                    if (elevator != null) {
+                        elevator.addNewCall(currentCall.getStartFloorLevel());
+                        tempList.remove(i);
+                    }
+                }
+            }
+        }
+    }
 
+    public synchronized List<Call> getExternalCalls() {
+        return this.externalCalls;
     }
 }
