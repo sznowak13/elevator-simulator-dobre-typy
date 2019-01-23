@@ -13,9 +13,8 @@ public class Elevator extends MovingEntity {
 
 
 
-    public Elevator() {
-        super();
-        this.id = instanceCounter++;
+    public Elevator(double X, double Y) {
+        super(X, Y, 0);
         this.currentFloorLevel = 0;
         this.isMoving = false;
         this.peopleInsideList = new ArrayList<>();
