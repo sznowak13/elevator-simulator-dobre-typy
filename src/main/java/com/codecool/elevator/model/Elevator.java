@@ -5,8 +5,6 @@ import java.util.List;
 import java.util.TreeSet;
 
 public class Elevator extends MovingEntity {
-    private int id;
-    private static int instanceCounter = 0;
     private int currentFloorLevel;
     private int destinationFloorLevel;
     private boolean isMoving;
