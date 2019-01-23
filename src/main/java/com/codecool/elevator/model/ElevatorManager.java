@@ -1,5 +1,7 @@
 package com.codecool.elevator.model;
 
+import com.codecool.elevator.view.DisplayConfig;
+
 import java.util.List;
 
 public class ElevatorManager implements Runnable {
@@ -14,6 +16,10 @@ public class ElevatorManager implements Runnable {
     }
 
     private ElevatorManager() {
+        this.elevatorPool = new Elevator[Config.ELEVATORS_AMOUNT];
+        for (int i = 0; i < Config.ELEVATORS_AMOUNT; i++) {
+            elevatorPool[i] = new Elevator(i * DisplayConfig.ELEVATOR_WIDTH, DisplayConfig.SCREEN_HEIGHT - DisplayConfig.FLOOR_HEIGHT);
+        }
     }
 
     public void sendElevatorTo(int floorLevel) {
@@ -22,6 +28,10 @@ public class ElevatorManager implements Runnable {
 
     public void searchForAvailableElevator(Call externalCall) {
 
+    }
+
+    public Elevator[] getElevatorPool() {
+        return elevatorPool;
     }
 
     @Override
