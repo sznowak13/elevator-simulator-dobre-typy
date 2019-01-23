@@ -12,9 +12,16 @@ public class ElevatorController {
     public ElevatorController(Elevator elevator, ElevatorBlock display) {
         this.elevator = elevator;
         this.display = display;
+
+        this.display.setLayoutX(elevator.getPosX());
+        this.display.setLayoutY(elevator.getPosY());
     }
 
     public void move() {
 
+    }
+
+    public ElevatorBlock getDisplay() {
+        return this.display;
     }
 }
