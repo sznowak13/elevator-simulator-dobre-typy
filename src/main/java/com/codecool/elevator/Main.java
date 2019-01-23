@@ -6,8 +6,6 @@ import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import javafx.application.Application;
 
-import java.awt.*;
-
 public class Main extends Application {
 
     public void start(Stage primaryStage) throws Exception {
