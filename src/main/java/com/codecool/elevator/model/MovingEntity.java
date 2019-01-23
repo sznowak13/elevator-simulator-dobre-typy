@@ -1,29 +1,43 @@
 package com.codecool.elevator.model;
 
 public abstract class MovingEntity {
-    private int posX;
-    private int posY;
+    private double posX;
+    private double posY;
     private int direction;
 
 
     public MovingEntity() {
-        this.posX = 0;
-        this.posY = 0;
-        this.direction = 0;
+        this(0, 0,0);
     }
 
-    public MovingEntity(int x, int y, int direction) {
+    public MovingEntity(double x, double y, int direction) {
         this.posX = x;
         this.posY = y;
         this.direction = direction;
     }
 
-    public int getPosX() {
+    public double getPosX() {
         return this.posX;
     }
 
-    public int getPosY() {
+    public void setPosX(double posX) {
+        this.posX = posX;
+    }
+
+    public double getPosY() {
         return this.posY;
+    }
+
+    public void setPosY(double posY) {
+        this.posY = posY;
+    }
+
+    public int getDirection() {
+        return direction;
+    }
+
+    public void setDirection(int direction) {
+        this.direction = direction;
     }
 
     public abstract void move();
