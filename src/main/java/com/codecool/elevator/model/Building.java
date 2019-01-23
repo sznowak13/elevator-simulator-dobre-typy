@@ -54,6 +54,15 @@ public class Building implements Runnable{
 
     @Override
     public void run() {
-
+        while (true) {
+            try {
+                Thread.sleep(Config.PEOPLE_SPAWN_TIME*1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            if (!peoplePool.isEmpty()) {
+                peoplePool.poll().spawn();
+            }
+        }
     }
 }
