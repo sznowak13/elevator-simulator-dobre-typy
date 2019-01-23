@@ -41,6 +41,9 @@ public class Person extends MovingEntity {
 
     @Override
     public void move() {
+        if (this.getPosX() > (DisplayConfig.ELEVATOR_WIDTH * Config.ELEVATORS_AMOUNT) + DisplayConfig.PERSON_WIDTH) {
+            this.setPosX(this.getPosX() + this.getDirection());
+        }
 
     }
 }
