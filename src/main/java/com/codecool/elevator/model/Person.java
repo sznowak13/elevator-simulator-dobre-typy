@@ -1,11 +1,13 @@
 package com.codecool.elevator.model;
 
+import com.codecool.elevator.view.DisplayConfig;
+
 public class Person extends MovingEntity {
     private int currentFloorLevel;
     private int destinationFloorLevel;
 
     public Person() {
-        super();
+        super(-DisplayConfig.PERSON_WIDTH, -DisplayConfig.PERSON_HEIGHT, 0);
     }
 
     public void spawn(int startFloor) {
