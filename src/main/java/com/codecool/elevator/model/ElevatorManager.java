@@ -17,6 +17,8 @@ public class ElevatorManager implements Runnable {
 
     private ElevatorManager() {
         this.elevatorPool = new Elevator[Config.ELEVATORS_AMOUNT];
+        Floor groundfloor = Building.getFloorList().get(0);
+
         for (int i = 0; i < Config.ELEVATORS_AMOUNT; i++) {
             elevatorPool[i] = new Elevator(i * DisplayConfig.ELEVATOR_WIDTH, DisplayConfig.SCREEN_HEIGHT - DisplayConfig.FLOOR_HEIGHT);
         }
@@ -35,8 +37,6 @@ public class ElevatorManager implements Runnable {
                 sameDirectionElevators.add(elevator);
             }
         }
-
-        System.out.println(sameDirectionElevators);
 
         if (sameDirectionElevators.isEmpty()) {
             return null;
@@ -72,7 +72,6 @@ public class ElevatorManager implements Runnable {
                 for (int i = 0; i < tempList.size(); i++) {
                     Call currentCall = tempList.get(i);
                     Elevator elevator = this.searchForAvailableElevator(currentCall);
-                    System.out.println(elevator.getInternalOrders());
                     if (elevator != null) {
                         elevator.addNewCall(currentCall.getStartFloorLevel());
                         externalCalls.remove(i);

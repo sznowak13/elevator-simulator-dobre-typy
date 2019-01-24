@@ -4,14 +4,14 @@ import java.util.*;
 
 public class Building implements Runnable{
     private static Building ourInstance = new Building();
-    private List<Floor> floorList;
+    private static List<Floor> floorList;
     private Queue<Person> peoplePool;
     private ElevatorManager Andrzej;
 
 
     private Building() {
-        this.createElevatorManager();
         this.createFloors();
+        this.createElevatorManager();
         this.createPeople();
     }
 
@@ -28,19 +28,18 @@ public class Building implements Runnable{
     }
 
     public void createFloors() {
-        this.floorList = new ArrayList<>();
+        floorList = new ArrayList<>();
 
         for (int i = 0; i < Config.FLOORS_AMOUNT; i++) {
-            this.floorList.add(new Floor(i));
+            floorList.add(new Floor(i));
         }
 
     }
-
     private void createElevatorManager() {
         this.Andrzej = ElevatorManager.getInstance();
     }
 
-    public List<Floor> getFloorList() {
+    public static synchronized List<Floor> getFloorList() {
         return floorList;
     }
 
@@ -60,9 +59,7 @@ public class Building implements Runnable{
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            if (!peoplePool.isEmpty()) {
-                peoplePool.poll().spawn();
-            }
+            if (!peoplePool.isEmpty()) peoplePool.poll().spawn();
         }
     }
 }
