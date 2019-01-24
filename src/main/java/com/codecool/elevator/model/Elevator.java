@@ -61,14 +61,13 @@ public class Elevator extends MovingEntity implements Runnable {
             if (this.getInternalOrders().isEmpty()) {
                 // smth
             } else {
-                if (this.destinationFloorLevel == null) {
-                    this.destinationFloorLevel = this.getInternalOrders().first();
-                    this.updateDirection();
-                }
+                this.destinationFloorLevel = this.getInternalOrders().first();
+                this.updateDirection();
 
                 if (currentFloorLevel != destinationFloorLevel) {
                     move();
                 }
+
                 try {
                     Thread.sleep(1);
                 } catch (InterruptedException e) {

@@ -72,9 +72,10 @@ public class ElevatorManager implements Runnable {
                 for (int i = 0; i < tempList.size(); i++) {
                     Call currentCall = tempList.get(i);
                     Elevator elevator = this.searchForAvailableElevator(currentCall);
+                    System.out.println(elevator.getInternalOrders());
                     if (elevator != null) {
                         elevator.addNewCall(currentCall.getStartFloorLevel());
-                        tempList.remove(i);
+                        externalCalls.remove(i);
                     }
                 }
             }
