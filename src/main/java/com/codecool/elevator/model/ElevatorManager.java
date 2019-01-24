@@ -27,12 +27,16 @@ public class ElevatorManager implements Runnable {
         List<Elevator> sameDirectionElevators = new ArrayList<>();
 
         for (Elevator elevator : this.getElevatorPool()) {
-            if (elevator.getDirection() == callDirection || elevator.getDirection() == 0) {
+            if (elevator.getDirection() == callDirection) {
                 if ((externalCall.getStartFloorLevel() - elevator.getCurrentFloorLevel()) * callDirection > 0 ) {
                     sameDirectionElevators.add(elevator);
                 }
+            } else if (elevator.getDirection() == 0) {
+                sameDirectionElevators.add(elevator);
             }
         }
+
+        System.out.println(sameDirectionElevators);
 
         if (sameDirectionElevators.isEmpty()) {
             return null;

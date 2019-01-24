@@ -52,13 +52,12 @@ public class Elevator extends MovingEntity implements Runnable {
     @Override
     public void move() {
         this.setPosY(this.getPosY() - this.getDirection());
-        this.currentFloorLevel = (int) (this.getPosY() / DisplayConfig.FLOOR_HEIGHT);
+        this.currentFloorLevel = (int) (((DisplayConfig.SCREEN_HEIGHT-DisplayConfig.FLOOR_HEIGHT) - this.getPosY()) / DisplayConfig.FLOOR_HEIGHT);
     }
 
     @Override
     public void run() {
         while (true) {
-            System.out.println(currentFloorLevel);
             if (this.getInternalOrders().isEmpty()) {
                 // smth
             } else {
@@ -67,7 +66,9 @@ public class Elevator extends MovingEntity implements Runnable {
                     this.updateDirection();
                 }
 
-                if (currentFloorLevel != destinationFloorLevel) move();
+                if (currentFloorLevel != destinationFloorLevel) {
+                    move();
+                }
                 try {
                     Thread.sleep(1);
                 } catch (InterruptedException e) {

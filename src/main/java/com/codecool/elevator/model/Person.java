@@ -5,6 +5,8 @@ import com.codecool.elevator.view.DisplayConfig;
 public class Person extends MovingEntity {
     private int currentFloorLevel;
     private int destinationFloorLevel;
+    private boolean closeToElevator;
+    private boolean inElevator;
     private boolean hasCalled;
     private boolean spawned;
 
@@ -30,13 +32,20 @@ public class Person extends MovingEntity {
         this.setDirection(-1);
         this.hasCalled  = false;
         this.spawned = true;
+        this.closeToElevator = false;
+        this.inElevator = false;
     }
 
 
     public void callAnElevator() {
-        ElevatorManager.getInstance().addExternalCall(new Call(this.currentFloorLevel, this.destinationFloorLevel));
-        this.setDirection(0);
-        this.hasCalled = true;
+        Call newCall = new Call(this.currentFloorLevel, this.destinationFloorLevel);
+        ElevatorManager.getInstance().addExternalCall(newCall);
+
+        if (checkIfCalledAnElevator(newCall)) this.hasCalled = true;
+    }
+
+    public boolean checkIfCalledAnElevator(Call call) {
+        return ElevatorManager.getInstance().getExternalCalls().contains(call);
     }
 
     public void getInElevator() {
@@ -49,14 +58,25 @@ public class Person extends MovingEntity {
 
     @Override
     public void move() {
-        if (this.getPosX() > (DisplayConfig.ELEVATOR_WIDTH * Config.ELEVATORS_AMOUNT) + DisplayConfig.PERSON_WIDTH) {
-            this.setPosX(this.getPosX() + this.getDirection());
-        }else {
-            if (!hasCalled){
-                callAnElevator();
-                System.out.println(hasCalled);
-            }
+        if (spawned && !inElevator) {
+            System.out.println(currentFloorLevel);
+            if (this.getPosX() > (DisplayConfig.ELEVATOR_WIDTH * Config.ELEVATORS_AMOUNT) + DisplayConfig.PERSON_WIDTH) {
+               this.setPosX(this.getPosX() + this.getDirection());
+            }else {
+                this.setDirection(0);
+                if (!hasCalled){
+                    callAnElevator();
+                }
         }
+
+        }
+//        if (this.getPosX() > (DisplayConfig.ELEVATOR_WIDTH * Config.ELEVATORS_AMOUNT) + DisplayConfig.PERSON_WIDTH) {
+//            this.setPosX(this.getPosX() + this.getDirection());
+//        }else {
+//            if (!hasCalled){
+//                callAnElevator();
+//            }
+//        }
 
 
 

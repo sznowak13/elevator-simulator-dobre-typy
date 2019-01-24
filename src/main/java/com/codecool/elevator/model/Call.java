@@ -18,4 +18,8 @@ public class Call {
     public int getDestinationFloorLevel() {
         return this.destinationFloorLevel;
     }
+
+    public String toString() {
+        return startFloorLevel + "/" + destinationFloorLevel;
+    }
 }
