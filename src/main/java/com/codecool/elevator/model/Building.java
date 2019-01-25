@@ -47,6 +47,10 @@ public class Building implements Runnable{
         return peoplePool;
     }
 
+    public void addPeople(Person person) {
+        this.peoplePool.add(person);
+    }
+
     public ElevatorManager getAndrzej() {
         return Andrzej;
     }

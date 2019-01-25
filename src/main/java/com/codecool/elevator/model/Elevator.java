@@ -116,7 +116,6 @@ public class Elevator extends MovingEntity implements Runnable {
                     moving = true;
                 } else {
                     moving = false;
-                    System.out.println(getDirection());
                     this.waitForPeople();
                 }
 

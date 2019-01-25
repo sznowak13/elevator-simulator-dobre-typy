@@ -106,7 +106,7 @@ public class Person extends MovingEntity implements PropertyChangeListener {
 
     @Override
     public void move() {
-        if (spawned && !inElevator) {
+        if (!inElevator) {
             if (this.getPosX() > (DisplayConfig.ELEVATOR_WIDTH * Config.ELEVATORS_AMOUNT) + DisplayConfig.PERSON_WIDTH) {
                this.setPosX(this.getPosX() + (this.getDirection()*Config.PEOPLE_SPEED));
 
@@ -118,6 +118,10 @@ public class Person extends MovingEntity implements PropertyChangeListener {
         } else if (arrived) {
             if (this.getPosX() < DisplayConfig.SCREEN_WIDTH) {
                 this.setPosX(this.getPosX() + (this.getDirection() * Config.PEOPLE_SPEED));
+            } else {
+                Building.getFloorList().get(destinationFloorLevel).removePerson(this);
+                Building.getInstance().addPeople(this);
+                this.spawned = false;
             }
         }
 
