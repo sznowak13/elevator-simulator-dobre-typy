@@ -79,6 +79,7 @@ public class Person extends MovingEntity implements PropertyChangeListener {
                 //this.setPosX(DisplayConfig.SCREEN_WIDTH - DisplayConfig.PERSON_WIDTH);
                 this.setPosY(DisplayConfig.SCREEN_HEIGHT - (DisplayConfig.FLOOR_HEIGHT * destinationFloorLevel));
                 this.arrived = true;
+                this.setDirection(1);
             }
         }
     }
@@ -116,7 +117,7 @@ public class Person extends MovingEntity implements PropertyChangeListener {
         }
         } else if (arrived) {
             if (this.getPosX() < DisplayConfig.SCREEN_WIDTH) {
-                this.setPosX(this.getPosX() + (1*Config.PEOPLE_SPEED));
+                this.setPosX(this.getPosX() + (this.getDirection() * Config.PEOPLE_SPEED));
             }
         }
 
