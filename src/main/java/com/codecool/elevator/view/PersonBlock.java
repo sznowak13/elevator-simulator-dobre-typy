@@ -16,8 +16,8 @@ public class PersonBlock extends Rectangle {
     }
 
     public void update(Person person) {
-        this.setTranslateX(person.getPosX());
-        this.setTranslateY(person.getPosY());
+        this.setLayoutX(person.getPosX());
+        this.setLayoutY(person.getPosY());
         if (person.isArrived()) {
             setFill(Color.GREEN);
         }

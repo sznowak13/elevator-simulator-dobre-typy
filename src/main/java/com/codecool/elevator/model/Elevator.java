@@ -98,8 +98,8 @@ public class Elevator extends MovingEntity implements Runnable {
         double elevatorEdge = (getDirection() == 1) ? DisplayConfig.SCREEN_HEIGHT-DisplayConfig.FLOOR_HEIGHT: DisplayConfig.SCREEN_HEIGHT;
         this.currentFloorLevel = (int) ((elevatorEdge - this.getPosY()) / DisplayConfig.FLOOR_HEIGHT);
         for (Person person: peopleInsideList) {
-            person.setPosX(this.getPosX() + DisplayConfig.ELEVATOR_WIDTH);
-            person.setPosY(this.getPosY() + DisplayConfig.FLOOR_HEIGHT);
+            person.setPosX(this.getPosX() + DisplayConfig.ELEVATOR_WIDTH / 4);
+            person.setPosY(this.getPosY() + DisplayConfig.PERSON_HEIGHT);
         }
     }
 
