@@ -1,23 +1,46 @@
 package com.codecool.elevator;
 
+import com.codecool.elevator.model.Building;
+import com.codecool.elevator.model.Elevator;
+import com.codecool.elevator.view.BuildingDisplay;
+import com.codecool.elevator.view.DisplayConfig;
 import javafx.scene.Scene;
-import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import javafx.application.Application;
 
-import java.awt.*;
-
 public class Main extends Application {
 
-    private final static double SCREEN_WIDTH = Toolkit.getDefaultToolkit().getScreenSize().getWidth();
-    private final static double SCREEN_HEIGHT = Toolkit.getDefaultToolkit().getScreenSize().getHeight();
+    @Override
+    public void init() {
+        DisplayConfig.setup();
+    }
 
+    @Override
     public void start(Stage primaryStage) throws Exception {
-        StackPane sp = new StackPane();
-        Scene scene = new Scene(sp, SCREEN_WIDTH, SCREEN_HEIGHT);
+        Building building = Building.getInstance();
+        BuildingDisplay buildingDisplay = new BuildingDisplay(building);
+        new Thread(building).start();
+        new Thread(building.getAndrzej()).start();
+        for (Elevator elevator: building.getAndrzej().getElevatorPool()) {
+            new Thread(elevator).start();
+        }
+
+
+        Scene scene = new Scene(buildingDisplay, DisplayConfig.SCREEN_WIDTH, DisplayConfig.SCREEN_HEIGHT);
+
+
 
         primaryStage.setTitle("Elewator symulator");
         primaryStage.setScene(scene);
         primaryStage.show();
+
+        buildingDisplay.startAnimation();
+
+
+    }
+
+    @Override
+    public void stop() {
+        System.exit(0);
     }
 }
